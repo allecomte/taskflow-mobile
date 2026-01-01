@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:taskflow_mobile/services/storage/secure_storage.dart';
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
@@ -7,13 +8,14 @@ class DioClient {
   factory DioClient() => _instance;
 
   Future<String?> _getToken() async {
-      // Récupérer le token (secure storage par ex.)
-      return null;
+      final token = await SecureStorage.getToken();
+      return token;
     }
 
   DioClient._internal() {
     dio = Dio(
       BaseOptions(
+        // baseUrl: 'http://localhost:3000/api/',
         baseUrl: 'https://api-task-flow-kappa.vercel.app/api/',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
@@ -24,7 +26,6 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Exemple : ajout automatique du token
           final token = await _getToken();
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
