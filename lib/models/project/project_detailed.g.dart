@@ -10,7 +10,7 @@ ProjectDetailed _$ProjectDetailedFromJson(Map<String, dynamic> json) =>
     ProjectDetailed(
       id: json['_id'] as String,
       title: json['title'] as String,
-      description: json['description'] as String,
+      description: json['description'] as String?,
       isArchived: json['isArchived'] as bool,
       startAt: json['startAt'] as String,
       endAt: json['endAt'] as String?,

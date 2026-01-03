@@ -7,13 +7,13 @@ part of 'task_light.dart';
 // **************************************************************************
 
 TaskLight _$TaskLightFromJson(Map<String, dynamic> json) => TaskLight(
-  id: json['id'] as String,
+  id: json['_id'] as String,
   state: json['state'] as String,
   project: json['project'] as String,
 );
 
 Map<String, dynamic> _$TaskLightToJson(TaskLight instance) => <String, dynamic>{
-  'id': instance.id,
+  '_id': instance.id,
   'state': instance.state,
   'project': instance.project,
 };

@@ -17,6 +17,7 @@ class BottomAppBarMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // -------- HOME BUTTON
             IconButton(
               onPressed: () {
                 MaterialPageRoute route = MaterialPageRoute(
@@ -32,6 +33,7 @@ class BottomAppBarMenu extends StatelessWidget {
                     : Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
+            // -------- PROJECTS BUTTON
             IconButton(
               onPressed: () {
                 MaterialPageRoute route = MaterialPageRoute(
@@ -47,6 +49,7 @@ class BottomAppBarMenu extends StatelessWidget {
                     : Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
+            // -------- TASKS BUTTON
             IconButton(
               onPressed: () {},
               icon: Icon(
@@ -57,6 +60,7 @@ class BottomAppBarMenu extends StatelessWidget {
                     : Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
+            // -------- SEARCH BUTTON
             IconButton(
               onPressed: () {},
               icon: Icon(
@@ -67,6 +71,7 @@ class BottomAppBarMenu extends StatelessWidget {
                     : Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
+            // -------- PROFILE BUTTON
             IconButton(
               onPressed: () {},
               icon: Icon(

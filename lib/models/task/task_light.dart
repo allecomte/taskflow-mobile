@@ -4,6 +4,7 @@ part 'task_light.g.dart';
 
 @JsonSerializable()
 class TaskLight {
+  @JsonKey(name: '_id')
   final String id;
   final String state;
   final String project;

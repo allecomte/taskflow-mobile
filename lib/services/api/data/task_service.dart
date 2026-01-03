@@ -19,8 +19,6 @@ class TaskService {
         if (assignee != null) 'assignee': assignee,
         if (dueAt != null) 'dueAt': dueAt,
       });
-      print('TASKS RESPONSE');
-      print(response.data);
       final result = ApiResponsePagination<Task>.fromJson(response.data, (json) => Task.fromJson(json as Map<String, dynamic>));
        return result;
     } on DioException catch (e) {

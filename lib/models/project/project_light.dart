@@ -23,9 +23,9 @@ class ProjectLight extends Project {
     return ProjectLight(
       id: json['_id'],
       title: json['title'],
-      description: json['description'],
+      description: json['description'] as String? ?? '',
       startAt: json['startAt'],
-      endAt: json['endAt'],
+      endAt: json['endAt'] as String? ?? '',
       tasks:
           (json['tasks'] as List<dynamic>?)?.map((e) => e as String).toList() ??
           [],
@@ -37,6 +37,7 @@ class ProjectLight extends Project {
     );
   }
 
+  @override
   Map<String, dynamic> toJson(){
     return {
       '_id': id,

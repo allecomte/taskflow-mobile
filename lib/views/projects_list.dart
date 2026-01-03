@@ -65,13 +65,12 @@ class ProjectsListState extends State<ProjectsList> {
     final projectService = ProjectService();
     try {
         final dataProjects = await projectService.getProjects(pagination: false, getAlsoArchived: false, sort: '-createdAt');
-        print('----- Projects fetched: -----');
-        print(dataProjects.data);
         setState(() {
           projects = dataProjects.data;
           projectsState = LoadState.success;
         });
       } catch (e) {
+        print('error fetching projects: $e');
         setState(() {
           projectsState = LoadState.error;
         });

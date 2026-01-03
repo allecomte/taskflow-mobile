@@ -15,6 +15,7 @@ class ProjectService {
         if (getAlsoArchived != null && !getAlsoArchived) 'isArchived': getAlsoArchived,
         if (sort != null) 'sort': sort,
       });
+      print(response.data);
       final result = ApiResponsePagination<ProjectLight>.fromJson(response.data, (json) => ProjectLight.fromJson(json as Map<String, dynamic>));
        return result;
     } on DioException catch (e) {

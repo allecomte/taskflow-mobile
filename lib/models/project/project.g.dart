@@ -9,7 +9,7 @@ part of 'project.dart';
 Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
   id: json['_id'] as String,
   title: json['title'] as String,
-  description: json['description'] as String,
+  description: json['description'] as String?,
   isArchived: json['isArchived'] as bool? ?? false,
   startAt: json['startAt'] as String,
   endAt: json['endAt'] as String?,
