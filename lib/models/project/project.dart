@@ -21,8 +21,7 @@ class Project {
     this.endAt
   });
 
-  factory Project.fromJson(Map<String, dynamic> json) =>
-      _$ProjectFromJson(json);
-
+  factory Project.fromJson(Map<String, dynamic> json) => _$ProjectFromJson(json);
+  
   Map<String, dynamic> toJson() => _$ProjectToJson(this);
 }

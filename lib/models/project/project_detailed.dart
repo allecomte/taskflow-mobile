@@ -26,8 +26,42 @@ class ProjectDetailed extends Project {
     this.tags = const [],
   });
 
-  factory ProjectDetailed.fromJson(Map<String, dynamic> json) => _$ProjectDetailedFromJson(json);
+  factory ProjectDetailed.fromJson(Map<String, dynamic> json) {
+    return ProjectDetailed(
+      id: json['_id'],
+      title: json['title'],
+      description: json['description'],
+      isArchived: json['isArchived'],
+      startAt: json['startAt'],
+      endAt: json['endAt'],
+      owner: User.fromJson(json['owner']),
+      members: (json['members'] as List<dynamic>?)
+              ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      tasks: (json['tasks'] as List<dynamic>?)
+              ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      tags: (json['tags'] as List<dynamic>?)
+              ?.map((e) => Tag.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
 
-  @override
-  Map<String, dynamic> toJson() => _$ProjectDetailedToJson(this);
+  Map<String, dynamic> toJson(){
+    return {
+      '_id': id,
+      'title': title,
+      'description': description,
+      'isArchived': isArchived,
+      'startAt': startAt,
+      'endAt': endAt,
+      'owner': owner.toJson(),
+      'members': members.map((e) => e.toJson()).toList(),
+      'tasks': tasks.map((e) => e.toJson()).toList(),
+      'tags': tags.map((e) => e.toJson()).toList(),
+    };
+  }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taskflow_mobile/views/home.dart';
+import 'package:taskflow_mobile/views/projects_list.dart';
 
 class BottomAppBarMenu extends StatelessWidget {
   final String currentView;
@@ -15,11 +17,66 @@ class BottomAppBarMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            IconButton(onPressed: (){}, icon: Icon(FontAwesomeIcons.solidHouse, size: 35, color: currentView == 'home' ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.inversePrimary)),
-            IconButton(onPressed: (){}, icon: Icon(FontAwesomeIcons.solidFolder, size: 35, color: currentView == 'project' ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.inversePrimary)),
-            IconButton(onPressed: (){}, icon: Icon(FontAwesomeIcons.list, size: 35, color: currentView == 'task' ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.inversePrimary)),
-            IconButton(onPressed: (){}, icon: Icon(FontAwesomeIcons.magnifyingGlass, size: 35, color: currentView == 'search' ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.inversePrimary)),
-            IconButton(onPressed: (){}, icon: Icon(FontAwesomeIcons.user, size: 35, color: currentView == 'profile' ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.inversePrimary)),
+            IconButton(
+              onPressed: () {
+                MaterialPageRoute route = MaterialPageRoute(
+                  builder: (context) => const Home(),
+                );
+                Navigator.of(context).push(route);
+              },
+              icon: Icon(
+                FontAwesomeIcons.solidHouse,
+                size: 35,
+                color: currentView == 'home'
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                MaterialPageRoute route = MaterialPageRoute(
+                  builder: (context) => const ProjectsList(),
+                );
+                Navigator.of(context).push(route);
+              },
+              icon: Icon(
+                FontAwesomeIcons.solidFolder,
+                size: 35,
+                color: currentView == 'project'
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                FontAwesomeIcons.list,
+                size: 35,
+                color: currentView == 'task'
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                FontAwesomeIcons.magnifyingGlass,
+                size: 35,
+                color: currentView == 'search'
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                FontAwesomeIcons.user,
+                size: 35,
+                color: currentView == 'profile'
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
           ],
         ),
       ),

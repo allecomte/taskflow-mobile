@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// Enums
+// import 'package:taskflow_mobile/enums/load_state.dart';
+// Models
 import 'package:taskflow_mobile/models/project/project.dart';
 import 'package:taskflow_mobile/models/task/task.dart';
+// Services
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
+import 'package:taskflow_mobile/views/projects_list.dart';
 // import 'package:taskflow_mobile/services/api/data/user_service.dart';
+// Widgets
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_project.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
@@ -26,6 +32,11 @@ class HomeState extends State<Home> {
   List<Project> projects = [];
   List<Task> tasks = [];
 
+  int numberOfProjects = 0;
+  int numberOfTasks = 0;
+
+  int numberOfItemsToDisplay = 5;
+
   @override
   void initState() {
     super.initState();
@@ -34,9 +45,8 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final displayedProjects = projects.take(5).toList();
-    final displayedTasks = tasks.take(5).toList();
-    return Scaffold(
+    return 
+    Scaffold(
       bottomNavigationBar: BottomAppBarMenu(currentView: 'home'),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -75,7 +85,7 @@ class HomeState extends State<Home> {
                                         ).colorScheme.onPrimary,
                                       )
                                     : Text(
-                                        '${projects.length}',
+                                        numberOfProjects.toString(),
                                         style: TextStyle(
                                           color: Theme.of(
                                             context,
@@ -126,7 +136,7 @@ class HomeState extends State<Home> {
                                         ).colorScheme.onPrimary,
                                       )
                                     : Text(
-                                        '${tasks.length}',
+                                        numberOfTasks.toString(),
                                         style: TextStyle(
                                           color: Theme.of(
                                             context,
@@ -180,6 +190,10 @@ class HomeState extends State<Home> {
                             ),
                           ],
                         ),
+                        onTap: () {
+                          MaterialPageRoute route = MaterialPageRoute(builder: (context) => const ProjectsList());
+                          Navigator.of(context).push(route);
+                        },
                       ),
                       SizedBox(height: 10),
                       projectsState == LoadState.loading
@@ -195,8 +209,8 @@ class HomeState extends State<Home> {
                           ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: ((context,index) => CardProject(project: displayedProjects[index])),
-                              itemCount: displayedProjects.length,
+                              itemBuilder: ((context,index) => CardProject(project: projects[index])),
+                              itemCount: projects.length < numberOfItemsToDisplay ? projects.length : numberOfItemsToDisplay,
                             ),
                     ],
                   ),
@@ -240,12 +254,12 @@ class HomeState extends State<Home> {
                                 color: Theme.of(context).colorScheme.error,
                               ),
                             )
-                          : projects.isEmpty ? Text("Vous n'avez aucune tâche", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontStyle: FontStyle.italic)) : 
+                          : tasks.isEmpty ? Text("Vous n'avez aucune tâche", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontStyle: FontStyle.italic)) : 
                           ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: ((context,index) => CardTask(task: displayedTasks[index])),
-                              itemCount: displayedTasks.length,
+                              itemBuilder: ((context,index) => CardTask(task: tasks[index])),
+                              itemCount: tasks.length < numberOfItemsToDisplay ? tasks.length : numberOfItemsToDisplay,
                             ),
                     ],
                   ),
@@ -281,9 +295,10 @@ class HomeState extends State<Home> {
 
     final projectService = ProjectService();
       try {
-        final dataProjects = await projectService.getProjects();
+        final dataProjects = await projectService.getProjects(pagination: true, limit: numberOfItemsToDisplay, page: 1, getAlsoArchived: false, sort: '-createdAt');
         setState(() {
-          projects = dataProjects;
+          projects = dataProjects.data;
+          numberOfProjects = dataProjects.pagination.total;
           projectsState = LoadState.success;
         });
       } catch (e) {
@@ -294,9 +309,10 @@ class HomeState extends State<Home> {
 
     final taskService = TaskService();
     try {
-      final dataTasks = await taskService.getTasks();
+      final dataTasks = await taskService.getTasks(pagination: true, limit: numberOfItemsToDisplay, page: 1, notClosed: true, sort: '-dueAt');
       setState(() {
-        tasks = dataTasks;
+        tasks = dataTasks.data;
+        numberOfTasks = dataTasks.pagination.total;
         tasksState = LoadState.success;
       });
     } catch (e) {
