@@ -50,6 +50,7 @@ class ProjectDetailed extends Project {
     );
   }
 
+  @override
   Map<String, dynamic> toJson(){
     return {
       '_id': id,

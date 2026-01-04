@@ -9,14 +9,12 @@ class User {
   String email;
   String firstname;
   String lastname;
-  List<String> roles;
 
   User({
     required this.id,
     required this.email,
     required this.firstname,
     required this.lastname,
-    required this.roles,
   });
 
   factory User.fromJson(Map<String, dynamic> json) =>

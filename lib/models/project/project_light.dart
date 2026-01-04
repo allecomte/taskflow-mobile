@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taskflow_mobile/models/project/project.dart';
-import 'package:taskflow_mobile/models/task/task_light.dart';
+import 'package:taskflow_mobile/models/task/task.dart';
 
 part 'project_light.g.dart';
 
 @JsonSerializable()
 class ProjectLight extends Project {
   final List<String> tasks;
-  final List<TaskLight> myTasks;
+  final List<Task> myTasks;
 
   ProjectLight({
     required super.id,
@@ -23,7 +23,7 @@ class ProjectLight extends Project {
     return ProjectLight(
       id: json['_id'],
       title: json['title'],
-      description: json['description'] as String? ?? '',
+      description: json['description'],
       startAt: json['startAt'],
       endAt: json['endAt'] as String? ?? '',
       tasks:
@@ -31,7 +31,7 @@ class ProjectLight extends Project {
           [],
       myTasks:
           (json['myTasks'] as List<dynamic>?)
-              ?.map((e) => TaskLight.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:taskflow_mobile/models/api/api_response_pagination.dart';
+import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/services/api/dio_client.dart';
 
@@ -15,11 +16,20 @@ class ProjectService {
         if (getAlsoArchived != null && !getAlsoArchived) 'isArchived': getAlsoArchived,
         if (sort != null) 'sort': sort,
       });
-      print(response.data);
       final result = ApiResponsePagination<ProjectLight>.fromJson(response.data, (json) => ProjectLight.fromJson(json as Map<String, dynamic>));
        return result;
     } on DioException catch (e) {
       throw Exception('Failed to load projects: ${e.message}');
     }
   }  
+
+  Future<ProjectDetailed> getProjectById(String projectId) async {
+    try {
+      final response = await _dio.get('projects/$projectId');
+      final project = ProjectDetailed.fromJson(response.data);
+      return project;
+    } on DioException catch (e) {
+      throw Exception('Failed to load project: ${e.message}');
+    }
+  }
 }

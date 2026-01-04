@@ -25,7 +25,7 @@ class CardTask extends StatelessWidget{
                                       ),
                                     ),
                                     subtitle: Text(
-                                      'échéance : ${task.dueAt}',
+                                      'Échéance : ${task.dueAt}',
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,

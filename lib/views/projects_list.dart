@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 // Enums
 import 'package:taskflow_mobile/enums/load_state.dart';
 // Models
-import 'package:taskflow_mobile/models/project/project.dart';
+import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
+import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_project.dart';
 import 'package:taskflow_mobile/widgets/list_skeleton.dart';
@@ -18,7 +19,7 @@ class ProjectsList extends StatefulWidget {
 
 class ProjectsListState extends State<ProjectsList> {
   LoadState projectsState = LoadState.loading;
-  List<Project> projects = [];
+  List<ProjectLight> projects = [];
 
   @override
   void initState() {
@@ -29,12 +30,7 @@ class ProjectsListState extends State<ProjectsList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Mes Projets', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
-        iconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      ),
+      appBar: AppBarCurrentView(title: 'Mes Projets'),
       bottomNavigationBar: BottomAppBarMenu(currentView: 'project'),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -70,7 +66,6 @@ class ProjectsListState extends State<ProjectsList> {
           projectsState = LoadState.success;
         });
       } catch (e) {
-        print('error fetching projects: $e');
         setState(() {
           projectsState = LoadState.error;
         });

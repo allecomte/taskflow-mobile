@@ -9,7 +9,7 @@ part of 'project_light.dart';
 ProjectLight _$ProjectLightFromJson(Map<String, dynamic> json) => ProjectLight(
   id: json['_id'] as String,
   title: json['title'] as String,
-  description: json['description'] as String?,
+  description: json['description'] as String,
   startAt: json['startAt'] as String,
   endAt: json['endAt'] as String?,
   tasks:
@@ -17,7 +17,7 @@ ProjectLight _$ProjectLightFromJson(Map<String, dynamic> json) => ProjectLight(
       const [],
   myTasks:
       (json['myTasks'] as List<dynamic>?)
-          ?.map((e) => TaskLight.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
 )..isArchived = json['isArchived'] as bool;

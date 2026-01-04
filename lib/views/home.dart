@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Enums
 // import 'package:taskflow_mobile/enums/load_state.dart';
 // Models
-import 'package:taskflow_mobile/models/project/project.dart';
+import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/task/task.dart';
 // Services
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
@@ -29,7 +29,7 @@ class HomeState extends State<Home> {
   LoadState projectsState = LoadState.loading;
   LoadState tasksState = LoadState.loading;
 
-  List<Project> projects = [];
+  List<ProjectLight> projects = [];
   List<Task> tasks = [];
 
   int numberOfProjects = 0;

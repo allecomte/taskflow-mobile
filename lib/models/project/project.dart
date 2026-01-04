@@ -7,7 +7,7 @@ class Project {
   @JsonKey(name: '_id')
   String id;
   String title;
-  String? description;
+  String description;
   bool isArchived;
   String startAt;
   String? endAt;
@@ -15,7 +15,7 @@ class Project {
   Project({
     required this.id,
     required this.title,
-    this.description,
+    required this.description,
     this.isArchived = false,
     required this.startAt,
     this.endAt
