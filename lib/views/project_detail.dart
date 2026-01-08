@@ -1,29 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
+import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
+import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
+import 'package:taskflow_mobile/widgets/card_task.dart';
+import 'package:taskflow_mobile/widgets/list_skeleton.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taskflow_mobile/providers/user_provider.dart';
 
-class ProjectDetail extends StatefulWidget {
+class ProjectDetail extends ConsumerStatefulWidget  {
   final ProjectLight projectLight;
   const ProjectDetail({super.key, required this.projectLight});
 
   @override
-  State<StatefulWidget> createState() => ProjectDetailState();
+  ConsumerState<ProjectDetail> createState() => ProjectDetailState();
 }
 
-class ProjectDetailState extends State<ProjectDetail>{
+class ProjectDetailState extends ConsumerState<ProjectDetail> {
   LoadState projectState = LoadState.loading;
   ProjectDetailed? projectDetail;
+  List<TaskLight> tasks = [];
 
   @override
   void initState() {
     super.initState();
     fetchProject();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,23 +43,103 @@ class ProjectDetailState extends State<ProjectDetail>{
             padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                Text(widget.projectLight.description, style: TextStyle(color: Theme.of(context).colorScheme.primary),)
-              ]
-            )
-            )
+                Text(
+                  widget.projectLight.description,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.calendar,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    SizedBox(width: 10),
+                    widget.projectLight.endAt!.isNotEmpty
+                        ? Text(
+                            "Du ${formatDateFr(widget.projectLight.startAt)} au ${formatDateFr(widget.projectLight.endAt!)}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          )
+                        : Text(
+                            "À partir du ${formatDateFr(widget.projectLight.startAt)}",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Mes tâches',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                projectState == LoadState.loading
+                    ? ListSkeleton()
+                    : projectState == LoadState.error
+                    ? Text(
+                        'Erreur lors du chargement des tâches',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      )
+                    : tasks.isEmpty
+                    ? Text(
+                        "Le projet ne contient aucune tâche vous étant assignée.",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: ((context, index) =>
+                            CardTask(task: projectDetail!.tasks[index])),
+                        itemCount: projectDetail!.tasks.length,
+                      ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
-  Future<void>fetchProject() async {
-    final projectService = ProjectService();
-    
-    try{
 
+  Future<void> fetchProject() async {
+    final projectService = ProjectService();
+    final user = ref.read(userProvider);
+    try {
+      final project = await projectService.getProjectById(
+        widget.projectLight.id,
+      );
+print('tasks');
+print(project.tasks.where((task) => task.assigneeId == user?.id));
+print('user id');
+print(user);
+
+      setState(() {
+        projectDetail = project;
+        tasks = project.tasks
+          .where((task) => task.assigneeId == user?.id)
+          .toList();
+        projectState = LoadState.success;
+      });
     } catch (e) {
-        setState(() {
-          projectState = LoadState.error;
-        });
-      }
+      setState(() {
+        projectState = LoadState.error;
+      });
+    }
   }
 }

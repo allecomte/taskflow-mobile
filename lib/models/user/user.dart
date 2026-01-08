@@ -9,12 +9,14 @@ class User {
   String email;
   String firstname;
   String lastname;
+  List<String> roles;
 
   User({
     required this.id,
     required this.email,
     required this.firstname,
     required this.lastname,
+    this.roles = const [],
   });
 
   factory User.fromJson(Map<String, dynamic> json) =>

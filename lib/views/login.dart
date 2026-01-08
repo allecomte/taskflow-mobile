@@ -28,11 +28,11 @@ class LoginState extends State<Login> {
     });
 
     try {
-      final token = await _authApi.login(
+      final result = await _authApi.login(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      await SecureStorage.saveToken(token);
+      await SecureStorage.saveToken(result['token']);
       if (!mounted) return;
       // using pushReplacement prevent from going back
       Navigator.pushReplacement(

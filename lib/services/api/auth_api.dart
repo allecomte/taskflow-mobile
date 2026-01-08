@@ -5,13 +5,14 @@ import 'package:taskflow_mobile/services/api/dio_client.dart';
 class AuthApi {
   final Dio _dio = DioClient().dio;
 
-  Future<String> login({required String email, required String password}) async {
+  Future<Map<String, dynamic>> login({required String email, required String password}) async {
     try{
       final response = await _dio.post(
       'users/login',
       data: {'email': email, 'password': password},
     );
-    return response.data['token'];
+    return response.data;
+    // return response.data['token'];
     }on DioException catch (e) {
       final message =
           e.response?.data['message'] ?? 'Identifiants invalides';

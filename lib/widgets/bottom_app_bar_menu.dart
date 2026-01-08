@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/views/home.dart';
+import 'package:taskflow_mobile/views/profile.dart';
 import 'package:taskflow_mobile/views/projects_list.dart';
 
 class BottomAppBarMenu extends StatelessWidget {
@@ -12,7 +13,7 @@ class BottomAppBarMenu extends StatelessWidget {
     return BottomAppBar(
       color: Theme.of(context).colorScheme.primary,
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsetsGeometry.directional(start: 16, end: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,7 +74,12 @@ class BottomAppBarMenu extends StatelessWidget {
             ),
             // -------- PROFILE BUTTON
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                MaterialPageRoute route = MaterialPageRoute(
+                  builder: (context) => const Profile(),
+                );
+                Navigator.of(context).push(route);
+              },
               icon: Icon(
                 FontAwesomeIcons.user,
                 size: 35,

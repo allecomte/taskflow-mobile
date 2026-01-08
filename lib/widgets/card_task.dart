@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow_mobile/models/task/task.dart';
+import 'package:taskflow_mobile/utils/format_date.dart';
 
 class CardTask extends StatelessWidget{
   final Task task;
@@ -25,7 +26,7 @@ class CardTask extends StatelessWidget{
                                       ),
                                     ),
                                     subtitle: Text(
-                                      'Échéance : ${task.dueAt}',
+                                      'Échéance : ${formatDateFr(task.dueAt)}',
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,

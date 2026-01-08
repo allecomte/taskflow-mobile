@@ -5,14 +5,13 @@ part 'user_detailed.g.dart';
 
 @JsonSerializable()
 class UserDetailed extends User{
-  List<String> roles;
 
   UserDetailed({
     required super.id,
     required super.email,
     required super.firstname,
     required super.lastname,
-    required this.roles
+    required super.roles
   });
 
   factory UserDetailed.fromJson(Map<String, dynamic> json) {

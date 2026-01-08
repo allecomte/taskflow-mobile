@@ -22,7 +22,7 @@ ProjectDetailed _$ProjectDetailedFromJson(Map<String, dynamic> json) =>
           const [],
       tasks:
           (json['tasks'] as List<dynamic>?)
-              ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => TaskLight.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       tags:

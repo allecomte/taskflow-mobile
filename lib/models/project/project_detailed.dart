@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taskflow_mobile/models/project/project.dart';
 import 'package:taskflow_mobile/models/tag/tag.dart';
-import 'package:taskflow_mobile/models/task/task.dart';
+import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 
 part 'project_detailed.g.dart';
@@ -10,7 +10,7 @@ part 'project_detailed.g.dart';
 class ProjectDetailed extends Project {
   final User owner;
   final List<User> members;
-  final List<Task> tasks;
+  final List<TaskLight> tasks;
   final List<Tag> tags;
 
   ProjectDetailed({
@@ -40,7 +40,7 @@ class ProjectDetailed extends Project {
               .toList() ??
           [],
       tasks: (json['tasks'] as List<dynamic>?)
-              ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => TaskLight.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       tags: (json['tags'] as List<dynamic>?)
