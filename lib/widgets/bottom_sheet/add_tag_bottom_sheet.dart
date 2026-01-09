@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class BottomSheetAddTag extends StatefulWidget {
-  const BottomSheetAddTag({super.key});
+class AddTagBottomSheet extends StatefulWidget {
+  const AddTagBottomSheet({super.key});
 
   @override
-  State<StatefulWidget> createState() => BottomSheetAddTagState();
+  State<StatefulWidget> createState() => AddTagBottomSheetState();
 }
 
-class BottomSheetAddTagState extends State<BottomSheetAddTag> {
+class AddTagBottomSheetState extends State<AddTagBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
 

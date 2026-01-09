@@ -15,4 +15,23 @@ class TagService {
       throw Exception('Failed to create tag: ${e.message}');
     }
   }
+
+  Future<Tag> updateTag({required String tagId, required String name}) async {
+    try {
+      final result = await _dio.patch('tags/$tagId', data: {'name': name});
+      print('🟩 RESULT | Tag updated: $result');
+      final tag = Tag.fromJson(result.data);
+      return tag;
+    } on DioException catch (e) {
+      throw Exception('Failed to create tag: ${e.message}');
+    }
+  }
+
+  Future<void> deleteTag({required String tagId})async {
+    try{
+      await _dio.delete('tags/$tagId');
+    }on DioException catch (e) {
+      throw Exception('Failed to delete tag: ${e.message}');
+    }
+  }
 }

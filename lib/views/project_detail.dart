@@ -12,7 +12,8 @@ import 'package:taskflow_mobile/utils/snackbar_info.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
-import 'package:taskflow_mobile/widgets/bottom_sheet_add_tag.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/add_tag_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/update_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/item_member.dart';
 import 'package:taskflow_mobile/widgets/skeleton/avatar_skeleton.dart';
@@ -80,7 +81,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (_) => const BottomSheetAddTag(),
+      builder: (_) => const AddTagBottomSheet(),
     );
 
     if (tagName == null) return;
@@ -101,8 +102,68 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       if (!mounted) return;
       SnackbarInfo.showSuccess(context, 'Tag créé avec succès');
     } catch (e) {
-      if (!mounted) return;
       SnackbarInfo.showError(context, 'Erreur lors de la création du tag');
+    }
+  }
+
+  Future<void> _openTagActionsBottomSheet(Tag tag) async {
+    final result = await showModalBottomSheet<(String, String?)>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => UpdateTagBottomSheet(initialName: tag.name),
+    );
+
+    if (result == null) return;
+
+    final (action, value) = result;
+
+    switch (action) {
+      case 'update':
+        if (value == null || value.isEmpty) return;
+        _updateTag(tag, value);
+        break;
+
+      case 'delete':
+        _deleteTag(tag);
+        break;
+    }
+  }
+
+  Future<void> _updateTag(Tag tag, String newName) async {
+    try {
+      final tagService = TagService();
+      final updatedTag = await tagService.updateTag(
+        tagId: tag.id,
+        name: newName,
+      );
+
+      final index = tags.indexWhere((t) => t.id == tag.id);
+      setState(() {
+        tags[index] = updatedTag;
+      });
+
+      if (!mounted) return;
+      SnackbarInfo.showSuccess(context, 'Tag modifié avec succès');
+    } catch (e) {
+      SnackbarInfo.showError(context, 'Erreur lors de la modification');
+    }
+  }
+
+  Future<void> _deleteTag(Tag tag) async {
+    try {
+      final tagService = TagService();
+      await tagService.deleteTag(tagId: tag.id);
+
+      setState(() {
+        tags.removeWhere((t) => t.id == tag.id);
+      });
+      if (!mounted) return;
+      SnackbarInfo.showSuccess(context, 'Tag supprimé');
+    } catch (e) {
+      SnackbarInfo.showError(context, 'Erreur lors de la suppression');
     }
   }
 
@@ -228,25 +289,31 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                           spacing: 8,
                           runSpacing: 8,
                           children: tags.map((tag) {
-                            return Container(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.9,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primaryFixed,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                tag.name,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
+                            return InkWell(
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () => _openTagActionsBottomSheet(tag),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryFixed,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  tag.name,
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                  ),
                                 ),
                               ),
                             );
