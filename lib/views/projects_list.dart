@@ -7,7 +7,7 @@ import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_project.dart';
-import 'package:taskflow_mobile/widgets/list_skeleton.dart';
+import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
 class ProjectsList extends StatefulWidget {
   const ProjectsList({super.key});

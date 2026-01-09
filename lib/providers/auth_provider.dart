@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:taskflow_mobile/models/user/user.dart';
+import 'package:taskflow_mobile/models/user/user_light.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/auth_api.dart';
 import 'package:taskflow_mobile/services/api/api_exception.dart';
@@ -35,7 +35,7 @@ class AuthNotifier extends AsyncNotifier<String?> {
       await SecureStorage.saveToken(result['token']);
 
       final userJson = result['user'] as Map<String, dynamic>;
-      final user = User(
+      final user = UserLight(
         id: userJson['_id'] as String,
         firstname: userJson['firstname'] as String,
         lastname: userJson['lastname'] as String,

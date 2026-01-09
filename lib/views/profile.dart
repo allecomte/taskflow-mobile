@@ -24,23 +24,7 @@ class ProfileState extends ConsumerState<Profile> {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: user == null ? 
-          // Text('Aucun utilisateur connecté') : 
-          ElevatedButton(
-                  onPressed: () async {
-                    // Supprimer token et user
-                        await ref.read(authProvider.notifier).logout();
-                        // ref.read(userProvider.notifier).clearUser();
-
-                        if (!context.mounted) return;
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const Login()),
-                          (route) => false,
-                        );
-                  },
-                  child: Text('Déconnexion'),
-                ) : 
+          Text('Aucun utilisateur connecté') : 
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -59,8 +43,6 @@ class ProfileState extends ConsumerState<Profile> {
                   onPressed: () async {
                     // Supprimer token et user
                         await ref.read(authProvider.notifier).logout();
-                        // ref.read(userProvider.notifier).clearUser();
-
                         if (!context.mounted) return;
                         Navigator.pushAndRemoveUntil(
                           context,

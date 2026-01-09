@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_detailed.dart';
+part of 'user_light.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserDetailed _$UserDetailedFromJson(Map<String, dynamic> json) => UserDetailed(
+UserLight _$UserLightFromJson(Map<String, dynamic> json) => UserLight(
   id: json['_id'] as String,
   email: json['email'] as String,
   firstname: json['firstname'] as String,
@@ -16,11 +16,10 @@ UserDetailed _$UserDetailedFromJson(Map<String, dynamic> json) => UserDetailed(
       const [],
 );
 
-Map<String, dynamic> _$UserDetailedToJson(UserDetailed instance) =>
-    <String, dynamic>{
-      '_id': instance.id,
-      'email': instance.email,
-      'firstname': instance.firstname,
-      'lastname': instance.lastname,
-      'roles': instance.roles,
-    };
+Map<String, dynamic> _$UserLightToJson(UserLight instance) => <String, dynamic>{
+  '_id': instance.id,
+  'email': instance.email,
+  'firstname': instance.firstname,
+  'lastname': instance.lastname,
+  'roles': instance.roles,
+};

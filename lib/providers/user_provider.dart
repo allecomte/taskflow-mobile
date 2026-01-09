@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:taskflow_mobile/models/user/user.dart';
+import 'package:taskflow_mobile/models/user/user_light.dart';
 
-final userProvider = StateNotifierProvider<UserNotifier, User?>(
+final userProvider = StateNotifierProvider<UserNotifier, UserLight?>(
   (ref) => UserNotifier(),
 );
 
-class UserNotifier extends StateNotifier<User?> {
+class UserNotifier extends StateNotifier<UserLight?> {
   UserNotifier() : super(null);
 
-  void setUser(User user) {
+  void setUser(UserLight user) {
     state = user;
   }
 

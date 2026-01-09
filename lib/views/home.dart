@@ -14,7 +14,7 @@ import 'package:taskflow_mobile/views/projects_list.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_project.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
-import 'package:taskflow_mobile/widgets/list_skeleton.dart';
+import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -205,7 +205,7 @@ class HomeState extends State<Home> {
                                 color: Theme.of(context).colorScheme.error,
                               ),
                             )
-                          : projects.isEmpty ? Text("Vous n'avez aucun projet", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontStyle: FontStyle.italic)) : 
+                          : projects.isEmpty ? Text("Vous n'avez aucun projet", style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontStyle: FontStyle.italic)) : 
                           ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -254,7 +254,7 @@ class HomeState extends State<Home> {
                                 color: Theme.of(context).colorScheme.error,
                               ),
                             )
-                          : tasks.isEmpty ? Text("Vous n'avez aucune tâche", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontStyle: FontStyle.italic)) : 
+                          : tasks.isEmpty ? Text("Vous n'avez aucune tâche", style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontStyle: FontStyle.italic)) : 
                           ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),

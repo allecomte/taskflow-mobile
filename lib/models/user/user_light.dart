@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 
-part 'user_detailed.g.dart';
+part 'user_light.g.dart';
 
 @JsonSerializable()
-class UserDetailed extends User{
+class UserLight extends User{
   List<String> roles;
 
-  UserDetailed({
+  UserLight({
     required super.id,
     required super.email,
     required super.firstname,
@@ -15,8 +15,8 @@ class UserDetailed extends User{
     this.roles = const [],
   });
 
-  factory UserDetailed.fromJson(Map<String, dynamic> json) {
-    return UserDetailed(
+  factory UserLight.fromJson(Map<String, dynamic> json) {
+    return UserLight(
       id: json['_id'],
       email: json['email'],
       firstname: json['firstname'],
