@@ -4,16 +4,19 @@ import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
+import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
+import 'package:taskflow_mobile/utils/snackbar_info.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet_add_tag.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/list_skeleton.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 
-class ProjectDetail extends ConsumerStatefulWidget  {
+class ProjectDetail extends ConsumerStatefulWidget {
   final ProjectLight projectLight;
   const ProjectDetail({super.key, required this.projectLight});
 
@@ -32,6 +35,58 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
     fetchProject();
   }
 
+  Future<void> fetchProject() async {
+    final projectService = ProjectService();
+    final user = ref.read(userProvider);
+    try {
+      final project = await projectService.getProjectById(
+        widget.projectLight.id,
+      );
+
+      setState(() {
+        projectDetail = project;
+        tasks = project.tasks
+            .where((task) => task.assigneeId == user?.id)
+            .toList();
+        projectState = LoadState.success;
+      });
+    } catch (e) {
+      setState(() {
+        projectState = LoadState.error;
+      });
+    }
+  }
+
+  Future<void> _onAddTagPressed() async {
+    final tagName = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => const BottomSheetAddTag(),
+    );
+
+    if (tagName == null) return;
+
+    _addTag(tagName);
+  }
+
+  Future<void> _addTag(String name) async {
+    try {
+      final tagService = TagService();
+      await tagService.createTag(
+        projectId: widget.projectLight.id,
+        name: name,
+      );
+      if (!mounted) return;
+      SnackbarInfo.showSuccess(context, 'Tag créé avec succès');
+    } catch (e) {
+      if (!mounted) return;
+      SnackbarInfo.showError(context, 'Erreur lors de la création du tag');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +97,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.projectLight.description,
@@ -74,6 +130,41 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                             ),
                           ),
                   ],
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Tags',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: _onAddTagPressed,
+                  child: Chip(
+                    label: Text(
+                      'Ajouter un tag',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+                    avatar: Icon(
+                      FontAwesomeIcons.plus,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(
+                        color: Colors.transparent,
+                        width: 0,
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -115,31 +206,5 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
         ),
       ),
     );
-  }
-
-  Future<void> fetchProject() async {
-    final projectService = ProjectService();
-    final user = ref.read(userProvider);
-    try {
-      final project = await projectService.getProjectById(
-        widget.projectLight.id,
-      );
-print('tasks');
-print(project.tasks.where((task) => task.assigneeId == user?.id));
-print('user id');
-print(user);
-
-      setState(() {
-        projectDetail = project;
-        tasks = project.tasks
-          .where((task) => task.assigneeId == user?.id)
-          .toList();
-        projectState = LoadState.success;
-      });
-    } catch (e) {
-      setState(() {
-        projectState = LoadState.error;
-      });
-    }
   }
 }
