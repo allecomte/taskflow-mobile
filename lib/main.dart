@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow_mobile/providers/auth_provider.dart';
 import 'package:taskflow_mobile/views/home.dart';
-import 'package:taskflow_mobile/views/login_consumer.dart';
+import 'package:taskflow_mobile/views/login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/views/splash_screen.dart';
 
