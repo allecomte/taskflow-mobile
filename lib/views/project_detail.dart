@@ -10,6 +10,7 @@ import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_info.dart';
 import 'package:taskflow_mobile/views/home.dart';
+import 'package:taskflow_mobile/views/project_form_update.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/add_tag_bottom_sheet.dart';
@@ -109,7 +110,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   }
 
   Future<void> _onUpdateTagPressed(Tag tag) async {
-    final newName  = await showModalBottomSheet<String>(
+    final newName = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -118,7 +119,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       builder: (_) => UpdateTagBottomSheet(initialName: tag.name),
     );
 
-    if (newName  == null || newName.isEmpty) return;
+    if (newName == null || newName.isEmpty) return;
 
     _updateTag(tag, newName);
   }
@@ -144,7 +145,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   }
 
   Future<void> _onDeleteTagPressed(Tag tag) async {
-    final confirm  = await showModalBottomSheet<bool>(
+    final confirm = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -153,7 +154,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       builder: (_) => DeleteTagBottomSheet(tagName: tag.name),
     );
 
-    if (confirm == true){
+    if (confirm == true) {
       _deleteTag(tag);
     }
   }
@@ -176,14 +177,39 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarCurrentView(title: widget.projectLight.title),
+      appBar: AppBarCurrentView(
+        title: widget.projectLight.title,
+        actions: projectDetail != null
+            ? [
+                Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ProjectFormUpdate(project: projectDetail!),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      FontAwesomeIcons.penToSquare,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ]
+            : [],
+      ),
       bottomNavigationBar: BottomAppBarMenu(currentView: 'project'),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: refreshProject,
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -295,7 +321,11 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                           spacing: 8,
                           runSpacing: 8,
                           children: tags.map((tag) {
-                            return ChipTag(tag: tag, onEdit: _onUpdateTagPressed, onDelete: _onDeleteTagPressed);
+                            return ChipTag(
+                              tag: tag,
+                              onEdit: _onUpdateTagPressed,
+                              onDelete: _onDeleteTagPressed,
+                            );
                           }).toList(),
                         ),
                   SizedBox(height: 10),
