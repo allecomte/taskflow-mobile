@@ -31,6 +31,7 @@ class SnackbarInfo {
     String message, {
     required Color backgroundColor,
   }) {
+    final mediaQuery = MediaQuery.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -39,7 +40,12 @@ class SnackbarInfo {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        bottom: mediaQuery.size.height * 0.7,
+      ),
+        // margin: const EdgeInsets.all(16),
         duration: const Duration(seconds: 3),
       ),
     );

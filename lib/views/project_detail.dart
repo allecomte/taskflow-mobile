@@ -13,8 +13,10 @@ import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/add_tag_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/delete_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/update_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
+import 'package:taskflow_mobile/widgets/chip_tag.dart';
 import 'package:taskflow_mobile/widgets/item_member.dart';
 import 'package:taskflow_mobile/widgets/skeleton/avatar_skeleton.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
@@ -106,8 +108,8 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
     }
   }
 
-  Future<void> _openTagActionsBottomSheet(Tag tag) async {
-    final result = await showModalBottomSheet<(String, String?)>(
+  Future<void> _onUpdateTagPressed(Tag tag) async {
+    final newName  = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -116,20 +118,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       builder: (_) => UpdateTagBottomSheet(initialName: tag.name),
     );
 
-    if (result == null) return;
+    if (newName  == null || newName.isEmpty) return;
 
-    final (action, value) = result;
-
-    switch (action) {
-      case 'update':
-        if (value == null || value.isEmpty) return;
-        _updateTag(tag, value);
-        break;
-
-      case 'delete':
-        _deleteTag(tag);
-        break;
-    }
+    _updateTag(tag, newName);
   }
 
   Future<void> _updateTag(Tag tag, String newName) async {
@@ -149,6 +140,21 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       SnackbarInfo.showSuccess(context, 'Tag modifié avec succès');
     } catch (e) {
       SnackbarInfo.showError(context, 'Erreur lors de la modification');
+    }
+  }
+
+  Future<void> _onDeleteTagPressed(Tag tag) async {
+    final confirm  = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => DeleteTagBottomSheet(tagName: tag.name),
+    );
+
+    if (confirm == true){
+      _deleteTag(tag);
     }
   }
 
@@ -289,34 +295,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                           spacing: 8,
                           runSpacing: 8,
                           children: tags.map((tag) {
-                            return InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () => _openTagActionsBottomSheet(tag),
-                              child: Container(
-                                constraints: BoxConstraints(
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primaryFixed,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  tag.name,
-                                  style: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                  ),
-                                ),
-                              ),
-                            );
+                            return ChipTag(tag: tag, onEdit: _onUpdateTagPressed, onDelete: _onDeleteTagPressed);
                           }).toList(),
                         ),
                   SizedBox(height: 10),

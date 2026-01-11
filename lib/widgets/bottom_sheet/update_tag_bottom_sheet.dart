@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class UpdateTagBottomSheet extends StatelessWidget {
+class UpdateTagBottomSheet extends StatefulWidget {
   final String initialName;
 
   const UpdateTagBottomSheet({super.key, required this.initialName});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = TextEditingController(text: initialName);
+  State<StatefulWidget> createState() => UpdateTagBottomSheetState();
+}
 
+class UpdateTagBottomSheetState extends State<UpdateTagBottomSheet> {
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.initialName);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -29,50 +46,37 @@ class UpdateTagBottomSheet extends StatelessWidget {
               Row(
                 children: [
                   Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Icon(
-                        FontAwesomeIcons.pen,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                    padding: EdgeInsets.only(right: 10),
+                    child: Icon(
+                      FontAwesomeIcons.pen,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-              Text(
-                'Modifier le tag',
-                style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-              )
+                  ),
+                  Text(
+                    'Modifier le tag',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
               TextField(
-                controller: controller,
+                controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Nom du tag'),
               ),
               const SizedBox(height: 24),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context, ('delete', null));
-                      },
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.error,
-                      ),
-                      child: const Text('Supprimer'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context, (
-                          'update',
-                          controller.text.trim(),
-                        ));
+                        Navigator.pop(context, _nameController.text.trim());
                       },
                       child: const Text('Enregistrer'),
                     ),

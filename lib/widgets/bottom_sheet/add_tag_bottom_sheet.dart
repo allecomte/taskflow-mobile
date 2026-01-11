@@ -68,7 +68,7 @@ class AddTagBottomSheetState extends State<AddTagBottomSheet> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        Navigator.of(context).pop(_controller.text);
+                        Navigator.of(context).pop(_controller.text.trim());
                       }
                     },
                     child: Text('Ajouter'),
