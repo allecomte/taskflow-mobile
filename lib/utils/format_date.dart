@@ -26,3 +26,7 @@ String formatDateTimeToString(DateTime date) {
          '${date.month.toString().padLeft(2, '0')}/'
          '${date.year}';
 }
+
+String? formatDateTimeToStringApi(DateTime? date) {
+  return date?.toUtc().toIso8601String().replaceFirst('Z', '+00:00');
+}

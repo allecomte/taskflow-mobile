@@ -47,9 +47,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   }
 
   Future<void> refreshProject() async {
-    setState(() {
-      projectState = LoadState.loading;
-    });
+    // setState(() {
+    //   projectState = LoadState.loading;
+    // });
     await fetchProject();
   }
 
@@ -176,9 +176,11 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final project = projectDetail ?? widget.projectLight;
+
     return Scaffold(
       appBar: AppBarCurrentView(
-        title: widget.projectLight.title,
+        title: project.title,
         actions: projectDetail != null
             ? [
                 Padding(
@@ -214,7 +216,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.projectLight.description,
+                    project.description,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -228,16 +230,16 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       SizedBox(width: 10),
-                      widget.projectLight.endAt!.isNotEmpty
+                      project.endAt!.isNotEmpty
                           ? Text(
-                              "Du ${formatDateFr(widget.projectLight.startAt)} au ${formatDateFr(widget.projectLight.endAt!)}",
+                              "Du ${formatDateFr(project.startAt)} au ${formatDateFr(project.endAt!)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                             )
                           : Text(
-                              "À partir du ${formatDateFr(widget.projectLight.startAt)}",
+                              "À partir du ${formatDateFr(project.startAt)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).colorScheme.primary,

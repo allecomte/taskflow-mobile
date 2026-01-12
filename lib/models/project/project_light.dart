@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taskflow_mobile/models/project/project.dart';
+import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/task/task.dart';
 
 part 'project_light.g.dart';
@@ -49,4 +50,17 @@ class ProjectLight extends Project {
       'myTasks': myTasks.map((e) => e.toJson()).toList(),
     };
   }
+
+  factory ProjectLight.fromDetailed(ProjectDetailed project) {
+  return ProjectLight(
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    startAt: project.startAt,
+    endAt: project.endAt,
+    tasks: project.tasks.map((t) => t.id).toList(),
+    myTasks: const [], // filtrer selon l'utilisateur ?
+  );
+}
+
 }

@@ -8,7 +8,6 @@ class TagService {
   Future<Tag> createTag({required String projectId, required String name}) async {
     try {
       final result = await _dio.post('projects/$projectId/tags', data: {'name': name});
-      print('🟩 RESULT | Tag created: $result');
       final tag = Tag.fromJson(result.data);
       return tag;
     } on DioException catch (e) {
@@ -19,7 +18,6 @@ class TagService {
   Future<Tag> updateTag({required String tagId, required String name}) async {
     try {
       final result = await _dio.patch('tags/$tagId', data: {'name': name});
-      print('🟩 RESULT | Tag updated: $result');
       final tag = Tag.fromJson(result.data);
       return tag;
     } on DioException catch (e) {

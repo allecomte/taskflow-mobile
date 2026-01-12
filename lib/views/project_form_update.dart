@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
+import 'package:taskflow_mobile/models/project/project_light.dart';
+import 'package:taskflow_mobile/services/api/data/project_service.dart';
+import 'package:taskflow_mobile/utils/snackbar_info.dart';
+import 'package:taskflow_mobile/views/project_detail.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
@@ -22,6 +26,8 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
   DateTime? _selectedStartAt;
   late final TextEditingController _endAtController;
   DateTime? _selectedEndAt;
+
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -49,6 +55,39 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
     _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _updateData() async {
+    setState(() {
+      _isProcessing = true;
+    });
+    try {
+      final projectService = ProjectService();
+      final project = await projectService.updateProject(
+        id: widget.project.id,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        startAt: formatDateTimeToStringApi(_selectedStartAt)!,
+        endAt: formatDateTimeToStringApi(_selectedEndAt),
+      );
+      MaterialPageRoute route = MaterialPageRoute(
+        builder: (context) =>
+            ProjectDetail(projectLight: ProjectLight.fromDetailed(project)),
+      );
+      if (!mounted) return;
+      Navigator.of(context)
+        ..pop()
+        ..pushReplacement(route);
+    } catch (e) {
+      SnackbarInfo.showError(
+        context,
+        'Erreur lors de la modification du projet',
+      );
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
   }
 
   @override
@@ -152,9 +191,18 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(onPressed: (){}, child: Text('Valider'))
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _updateData();
+                              }
+                            },
+                            child: _isProcessing
+                                ? CircularProgressIndicator()
+                                : Text('Valider'),
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
