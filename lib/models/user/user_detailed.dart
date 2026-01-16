@@ -4,8 +4,10 @@ import 'package:taskflow_mobile/models/user/user.dart';
 part 'user_detailed.g.dart';
 
 @JsonSerializable()
-class UserDetailed extends User{
+class UserDetailed extends User {
   List<String> roles;
+  List<String> projectsMemberOf;
+  List<String> tasksAssigned;
 
   UserDetailed({
     required super.id,
@@ -13,6 +15,8 @@ class UserDetailed extends User{
     required super.firstname,
     required super.lastname,
     this.roles = const [],
+    this.projectsMemberOf = const [],
+    this.tasksAssigned = const [],
   });
 
   factory UserDetailed.fromJson(Map<String, dynamic> json) {
@@ -21,21 +25,28 @@ class UserDetailed extends User{
       email: json['email'],
       firstname: json['firstname'],
       lastname: json['lastname'],
-      roles: (json['roles'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
+      roles:
+          (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          [],
+      projectsMemberOf:
+          (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          [],
+      tasksAssigned:
+          (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList() ??
           [],
     );
   }
 
   @override
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       '_id': id,
       'email': email,
       'firstname': firstname,
       'lastname': lastname,
       'roles': roles,
+      'projectsMemberOf': roles,
+      'tasksAssigned': roles,
     };
   }
 }

@@ -14,6 +14,16 @@ UserDetailed _$UserDetailedFromJson(Map<String, dynamic> json) => UserDetailed(
   roles:
       (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
+  projectsMemberOf:
+      (json['projectsMemberOf'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
+  tasksAssigned:
+      (json['tasksAssigned'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$UserDetailedToJson(UserDetailed instance) =>
@@ -23,4 +33,6 @@ Map<String, dynamic> _$UserDetailedToJson(UserDetailed instance) =>
       'firstname': instance.firstname,
       'lastname': instance.lastname,
       'roles': instance.roles,
+      'projectsMemberOf': instance.projectsMemberOf,
+      'tasksAssigned': instance.tasksAssigned,
     };

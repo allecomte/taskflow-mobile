@@ -5,6 +5,7 @@ import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
+import 'package:taskflow_mobile/models/user/user_detailed.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
@@ -14,6 +15,7 @@ import 'package:taskflow_mobile/views/project_form_update.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/add_tag_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/add_user_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/delete_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/update_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
@@ -47,9 +49,6 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   }
 
   Future<void> refreshProject() async {
-    // setState(() {
-    //   projectState = LoadState.loading;
-    // });
     await fetchProject();
   }
 
@@ -174,14 +173,45 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
     }
   }
 
+  Future<void> _onAddUserPressed() async {
+    final UserDetailed? userToAdd = await showModalBottomSheet<UserDetailed>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => const AddUserBottomSheet(userIdsToExclude: []),
+    );
+    if (userToAdd == null) return;
+    __addMember(userToAdd);
+  }
+
+  Future<void> __addMember(UserDetailed user) async {
+    try {
+      final projectService = ProjectService();
+      await projectService.addMemberToProject(
+        projectId: widget.projectLight.id,
+        userId: user.id,
+      );
+      setState(() {
+        members.add(user);
+      });
+      if (!mounted) return;
+      SnackbarInfo.showSuccess(context, '${user.firstname} ${user.lastname} a été au projet avec succès');
+    } catch (e) {
+      SnackbarInfo.showError(context, 'Erreur lors de l\'ajout de ${user.firstname} ${user.lastname} au projet');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     final project = projectDetail ?? widget.projectLight;
 
     return Scaffold(
       appBar: AppBarCurrentView(
         title: project.title,
-        actions: projectDetail != null
+        actions: projectDetail != null && user!.roles.contains('ROLE_MANAGER')
             ? [
                 Padding(
                   padding: EdgeInsets.only(right: 10),
@@ -249,13 +279,19 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                   ),
                   SizedBox(height: 20),
                   // ------------------------------- MEMBERS
-                  Text(
-                    'Membres',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Membres',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                     if (user!.roles.contains('ROLE_MANAGER')) InkWell(onTap: _onAddUserPressed, child: Icon(FontAwesomeIcons.circlePlus, color: Theme.of(context).colorScheme.primary,),) 
+                    ],
                   ),
                   SizedBox(height: 10),
                   projectState == LoadState.loading

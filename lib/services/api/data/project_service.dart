@@ -56,12 +56,6 @@ class ProjectService {
     String? endAt,
   }) async {
     try {
-      print({
-          'title': title,
-          'description': description,
-          'startAt': startAt,
-          'endAt': endAt,
-        });
       final response = await _dio.patch(
         'projects/$id',
         data: jsonEncode({
@@ -77,6 +71,19 @@ class ProjectService {
       return project;
     } on DioException catch (e) {
       throw Exception('Failed to update project: ${e.message}');
+    }
+  }
+
+  Future<void> addMemberToProject({required String projectId, required String userId}) async {
+    try{
+      await _dio.post(
+        'projects/$projectId/members',
+        data: jsonEncode({
+          'member': userId
+        }),
+      );
+    }on DioException catch (e) {
+      throw Exception('Failed to add the user to the project: ${e.message}');
     }
   }
 }
