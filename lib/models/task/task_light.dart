@@ -1,19 +1,19 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taskflow_mobile/models/task/task.dart';
+import 'package:taskflow_mobile/models/user/user.dart';
 
 part 'task_light.g.dart';
 
 @JsonSerializable()
 class TaskLight extends Task {
-  @JsonKey(name: 'assignee')
-  String assigneeId;
+  final User? assignee;
   TaskLight({
     required super.id,
     required super.title,
     required super.state,
     required super.priority,
     required super.dueAt,
-    required this.assigneeId,
+    this.assignee,
   });
 
   factory TaskLight.fromJson(Map<String, dynamic> json) {
@@ -23,7 +23,7 @@ class TaskLight extends Task {
       state: json['state'],
       priority: json['priority'],
       dueAt: json['dueAt'],
-      assigneeId: json['assignee'],
+      assignee: json['assignee'] != null ? User.fromJson(json['assignee']) : null,
     );
   }
   @override
@@ -34,7 +34,7 @@ class TaskLight extends Task {
       'state': state,
       'priority': priority,
       'dueAt': dueAt,
-      'assignee': assigneeId,
+      'assignee': assignee?.id,
     };
   }
 }

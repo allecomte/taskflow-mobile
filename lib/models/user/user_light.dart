@@ -6,6 +6,7 @@ part 'user_light.g.dart';
 @JsonSerializable()
 class UserLight extends User{
   List<String> roles;
+  List<String> projectsOwned;
 
   UserLight({
     required super.id,
@@ -13,6 +14,7 @@ class UserLight extends User{
     required super.firstname,
     required super.lastname,
     this.roles = const [],
+    this.projectsOwned = const [],
   });
 
   factory UserLight.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,10 @@ class UserLight extends User{
       firstname: json['firstname'],
       lastname: json['lastname'],
       roles: (json['roles'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      projectsOwned: (json['projectsOwned'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -36,6 +42,7 @@ class UserLight extends User{
       'firstname': firstname,
       'lastname': lastname,
       'roles': roles,
+      'projectsOwned': roles,
     };
   }
 }

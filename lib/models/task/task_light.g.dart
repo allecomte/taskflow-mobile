@@ -12,7 +12,9 @@ TaskLight _$TaskLightFromJson(Map<String, dynamic> json) => TaskLight(
   state: json['state'] as String,
   priority: json['priority'] as String,
   dueAt: json['dueAt'] as String,
-  assigneeId: json['assignee'] as String,
+  assignee: json['assignee'] == null
+      ? null
+      : User.fromJson(json['assignee'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$TaskLightToJson(TaskLight instance) => <String, dynamic>{
@@ -21,5 +23,5 @@ Map<String, dynamic> _$TaskLightToJson(TaskLight instance) => <String, dynamic>{
   'state': instance.state,
   'priority': instance.priority,
   'dueAt': instance.dueAt,
-  'assignee': instance.assigneeId,
+  'assignee': instance.assignee,
 };

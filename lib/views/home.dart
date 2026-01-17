@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:taskflow_mobile/enums/load_state.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_light.dart';
-import 'package:taskflow_mobile/models/task/task.dart';
+import 'package:taskflow_mobile/models/task/task_light.dart';
 // Services
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
@@ -30,7 +30,7 @@ class HomeState extends State<Home> {
   LoadState tasksState = LoadState.loading;
 
   List<ProjectLight> projects = [];
-  List<Task> tasks = [];
+  List<TaskLight> tasks = [];
 
   int numberOfProjects = 0;
   int numberOfTasks = 0;
@@ -273,10 +273,6 @@ class HomeState extends State<Home> {
   }
 
   Future<void> getData() async {
-    // final userService = UserService();
-    // final user = await userService.getUserProfile();
-    // print('User ID: ${user.id}');
-
     // TO SIMULATE LOADING TIME
     // Future.delayed(const Duration(seconds: 5), () async {
     //   final projectService = ProjectService();

@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:taskflow_mobile/models/api/api_response_pagination.dart';
-import 'package:taskflow_mobile/models/task/task.dart';
+import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/services/api/dio_client.dart';
 
 class TaskService {
  final Dio _dio = DioClient().dio;
- Future<ApiResponsePagination<Task>> getTasks({bool pagination = false , int? page, int? limit, bool? notClosed, String? sort, String? state, String? priority, String? tag, String? assignee, String? dueAt}) async {
+ Future<ApiResponsePagination<TaskLight>> getTasks({bool pagination = false , int? page, int? limit, bool? notClosed, String? sort, String? state, String? priority, String? tag, String? assignee, String? dueAt}) async {
     try {
       final response = await _dio.get('tasks', queryParameters: {
         'pagination': pagination,
@@ -19,7 +19,7 @@ class TaskService {
         if (assignee != null) 'assignee': assignee,
         if (dueAt != null) 'dueAt': dueAt,
       });
-      final result = ApiResponsePagination<Task>.fromJson(response.data, (json) => Task.fromJson(json as Map<String, dynamic>));
+      final result = ApiResponsePagination<TaskLight>.fromJson(response.data, (json) => TaskLight.fromJson(json as Map<String, dynamic>));
        return result;
     } on DioException catch (e) {
       throw Exception('Failed to load tasks: ${e.message}');

@@ -14,6 +14,11 @@ UserLight _$UserLightFromJson(Map<String, dynamic> json) => UserLight(
   roles:
       (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
+  projectsOwned:
+      (json['projectsOwned'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$UserLightToJson(UserLight instance) => <String, dynamic>{
@@ -22,4 +27,5 @@ Map<String, dynamic> _$UserLightToJson(UserLight instance) => <String, dynamic>{
   'firstname': instance.firstname,
   'lastname': instance.lastname,
   'roles': instance.roles,
+  'projectsOwned': instance.projectsOwned,
 };

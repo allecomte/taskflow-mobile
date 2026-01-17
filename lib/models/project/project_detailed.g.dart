@@ -30,6 +30,8 @@ ProjectDetailed _$ProjectDetailedFromJson(Map<String, dynamic> json) =>
               ?.map((e) => Tag.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      createdAt: json['createdAt'] as String,
+      updatedAt: json['updatedAt'] as String?,
     );
 
 Map<String, dynamic> _$ProjectDetailedToJson(ProjectDetailed instance) =>
@@ -44,4 +46,6 @@ Map<String, dynamic> _$ProjectDetailedToJson(ProjectDetailed instance) =>
       'members': instance.members,
       'tasks': instance.tasks,
       'tags': instance.tags,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
     };

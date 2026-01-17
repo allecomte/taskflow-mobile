@@ -41,6 +41,7 @@ class AuthNotifier extends AsyncNotifier<String?> {
         lastname: userJson['lastname'] as String,
         email: userJson['email'] as String,
         roles: List<String>.from(userJson['roles'] ?? []),
+        projectsOwned: List<String>.from(userJson['projectsOwned'] ?? []),
       );
 
       _ref.read(userProvider.notifier).setUser(user);

@@ -22,6 +22,7 @@ import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/chip_tag.dart';
 import 'package:taskflow_mobile/widgets/item_member.dart';
 import 'package:taskflow_mobile/widgets/skeleton/avatar_skeleton.dart';
+import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
@@ -41,6 +42,8 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   List<TaskLight> tasks = [];
   List<Tag> tags = [];
   List<User> members = [];
+  User? owner;
+  String? createdAt;
 
   @override
   void initState() {
@@ -55,6 +58,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   Future<void> fetchProject() async {
     final projectService = ProjectService();
     final user = ref.read(userProvider);
+    final isUserManager = user!.roles.contains('ROLE_MANAGER');
     try {
       final project = await projectService.getProjectById(
         widget.projectLight.id,
@@ -62,11 +66,13 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
 
       setState(() {
         projectDetail = project;
-        tasks = project.tasks
-            .where((task) => task.assigneeId == user?.id)
+        tasks = isUserManager ? project.tasks : project.tasks
+            .where((task) => task.assignee?.id == user.id)
             .toList();
         tags = project.tags;
         members = project.members;
+        owner = project.owner;
+        createdAt = project.createdAt;
         projectState = LoadState.success;
       });
     } catch (e) {
@@ -197,9 +203,15 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
         members.add(user);
       });
       if (!mounted) return;
-      SnackbarInfo.showSuccess(context, '${user.firstname} ${user.lastname} a été au projet avec succès');
+      SnackbarInfo.showSuccess(
+        context,
+        '${user.firstname} ${user.lastname} a été au projet avec succès',
+      );
     } catch (e) {
-      SnackbarInfo.showError(context, 'Erreur lors de l\'ajout de ${user.firstname} ${user.lastname} au projet');
+      SnackbarInfo.showError(
+        context,
+        'Erreur lors de l\'ajout de ${user.firstname} ${user.lastname} au projet',
+      );
     }
   }
 
@@ -207,11 +219,13 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     final project = projectDetail ?? widget.projectLight;
+    final isUserManager = user!.roles.contains('ROLE_MANAGER');
+    final isUserOwner = user.projectsOwned.contains(project.id);
 
     return Scaffold(
       appBar: AppBarCurrentView(
         title: project.title,
-        actions: projectDetail != null && user!.roles.contains('ROLE_MANAGER')
+        actions: projectDetail != null && isUserManager && isUserOwner
             ? [
                 Padding(
                   padding: EdgeInsets.only(right: 10),
@@ -278,6 +292,32 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                     ],
                   ),
                   SizedBox(height: 20),
+                  projectState == LoadState.loading
+                      ? LineSkeleton()
+                      : projectState == LoadState.error
+                      ? Text(
+                          'Erreur lors du chargement des donnés',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        )
+                      : Row(
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.user,
+                              size: 16,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Créé par ${owner?.firstname ?? ''} ${owner?.lastname ?? ''} le ${createdAt != null ? formatDateFr(createdAt!) : ''}',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                  SizedBox(height: 20),
                   // ------------------------------- MEMBERS
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -290,7 +330,14 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                     if (user!.roles.contains('ROLE_MANAGER')) InkWell(onTap: _onAddUserPressed, child: Icon(FontAwesomeIcons.circlePlus, color: Theme.of(context).colorScheme.primary,),) 
+                      if (isUserManager && isUserOwner)
+                        InkWell(
+                          onTap: _onAddUserPressed,
+                          child: Icon(
+                            FontAwesomeIcons.circlePlus,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -393,7 +440,8 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'Mes tâches',
+                    isUserManager ?
+                    'Tâches' : 'Mes tâches',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 22,
@@ -422,7 +470,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: ((context, index) =>
-                              CardTask(task: projectDetail!.tasks[index])),
+                              CardTask(task: projectDetail!.tasks[index], displayAssignee: isUserManager,)),
                           itemCount: projectDetail!.tasks.length,
                         ),
                 ],

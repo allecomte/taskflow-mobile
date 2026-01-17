@@ -12,6 +12,8 @@ class ProjectDetailed extends Project {
   final List<User> members;
   final List<TaskLight> tasks;
   final List<Tag> tags;
+  String createdAt;
+  String? updatedAt;
 
   ProjectDetailed({
     required super.id,
@@ -24,6 +26,8 @@ class ProjectDetailed extends Project {
     this.members = const [],
     this.tasks = const [],
     this.tags = const [],
+    required this.createdAt,
+    this.updatedAt,
   });
 
   factory ProjectDetailed.fromJson(Map<String, dynamic> json) {
@@ -35,23 +39,28 @@ class ProjectDetailed extends Project {
       startAt: json['startAt'],
       endAt: json['endAt'],
       owner: User.fromJson(json['owner']),
-      members: (json['members'] as List<dynamic>?)
+      members:
+          (json['members'] as List<dynamic>?)
               ?.map((e) => User.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      tasks: (json['tasks'] as List<dynamic>?)
+      tasks:
+          (json['tasks'] as List<dynamic>?)
               ?.map((e) => TaskLight.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      tags: (json['tags'] as List<dynamic>?)
+      tags:
+          (json['tags'] as List<dynamic>?)
               ?.map((e) => Tag.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'] as String? ?? '',
     );
   }
 
   @override
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       '_id': id,
       'title': title,
@@ -63,6 +72,8 @@ class ProjectDetailed extends Project {
       'members': members.map((e) => e.toJson()).toList(),
       'tasks': tasks.map((e) => e.toJson()).toList(),
       'tags': tags.map((e) => e.toJson()).toList(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 }
