@@ -23,9 +23,9 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
   late final TextEditingController _startAtController;
-  DateTime? _selectedStartAt;
+  DateTime? _startAtSelected;
   late final TextEditingController _endAtController;
-  DateTime? _selectedEndAt;
+  DateTime? _endAtSelected;
 
   bool _isProcessing = false;
 
@@ -39,12 +39,12 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
     _startAtController = TextEditingController(
       text: formatDateFr(widget.project.startAt),
     );
-    _selectedStartAt = DateTime.parse(widget.project.startAt);
+    _startAtSelected = DateTime.parse(widget.project.startAt);
     if (widget.project.endAt != null) {
       _endAtController = TextEditingController(
         text: formatDateFr(widget.project.endAt!),
       );
-      _selectedEndAt = DateTime.parse(widget.project.endAt!);
+      _endAtSelected = DateTime.parse(widget.project.endAt!);
     } else {
       _endAtController = TextEditingController();
     }
@@ -69,8 +69,8 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
         id: widget.project.id,
         title: _titleController.text,
         description: _descriptionController.text,
-        startAt: formatDateTimeToStringApi(_selectedStartAt)!,
-        endAt: formatDateTimeToStringApi(_selectedEndAt),
+        startAt: formatDateTimeToStringApi(_startAtSelected)!,
+        endAt: formatDateTimeToStringApi(_endAtSelected),
       );
       MaterialPageRoute route = MaterialPageRoute(
         builder: (context) =>
@@ -147,11 +147,11 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
                           onTap: () async {
                             final pickedDate = await pickDate(
                               context: context,
-                              initialDate: _selectedStartAt,
+                              initialDate: _startAtSelected,
                             );
                             if (pickedDate != null) {
                               setState(() {
-                                _selectedStartAt = pickedDate;
+                                _startAtSelected = pickedDate;
                                 _startAtController.text =
                                     formatDateTimeToString(pickedDate);
                               });
@@ -177,11 +177,11 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
                           onTap: () async {
                             final pickedDate = await pickDate(
                               context: context,
-                              initialDate: _selectedEndAt,
+                              initialDate: _endAtSelected,
                             );
                             if (pickedDate != null) {
                               setState(() {
-                                _selectedEndAt = pickedDate;
+                                _endAtSelected = pickedDate;
                                 _endAtController.text = formatDateTimeToString(
                                   pickedDate,
                                 );

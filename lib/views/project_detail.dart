@@ -12,7 +12,7 @@ import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_info.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/project_form_update.dart';
-import 'package:taskflow_mobile/views/task_form_create.dart';
+import 'package:taskflow_mobile/views/task_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/add_tag_bottom_sheet.dart';
@@ -504,7 +504,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
-                                  TaskFormCreate(project: projectDetail),
+                                  TaskForm(project: projectDetail),
                             ),
                           ),
                           child: Icon(

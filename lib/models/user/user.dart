@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:taskflow_mobile/models/user/user_detailed.dart';
 
 part 'user.g.dart';
 
@@ -21,4 +22,13 @@ class User {
       _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+
+  factory User.fromDetailed(UserDetailed user){
+    return User(
+      id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email
+    );
+  }
 }

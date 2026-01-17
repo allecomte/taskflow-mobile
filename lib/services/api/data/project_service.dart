@@ -64,13 +64,12 @@ class ProjectService {
           'startAt': startAt,
           'endAt': endAt,
         }),
-        // options: Options(headers: {'Content-Type': 'application/json'}),
       );
       final project = ProjectDetailed.fromJson(response.data);
       print('🟩 RESULT | Project updated: $project');
       return project;
     } on DioException catch (e) {
-      throw Exception('Failed to update project: ${e.message}');
+      throw Exception('Failed to update project : ${e.message}');
     }
   }
 
@@ -83,7 +82,7 @@ class ProjectService {
         }),
       );
     }on DioException catch (e) {
-      throw Exception('Failed to add the user to the project: ${e.message}');
+      throw Exception('Failed to add the user to the project : ${e.message}');
     }
   }
 
@@ -93,7 +92,7 @@ class ProjectService {
         'projects/$projectId/members/$userId'
       );
     }on DioException catch (e) {
-      throw Exception('Failed to remove the user from the project: ${e.message}');
+      throw Exception('Failed to remove the user from the project : ${e.message}');
     }
   }
 }
