@@ -12,11 +12,13 @@ import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_info.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/project_form_update.dart';
+import 'package:taskflow_mobile/views/task_form_create.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/add_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/add_user_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/delete_tag_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/delete_user_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/update_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/chip_tag.dart';
@@ -66,9 +68,11 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
 
       setState(() {
         projectDetail = project;
-        tasks = isUserManager ? project.tasks : project.tasks
-            .where((task) => task.assignee?.id == user.id)
-            .toList();
+        tasks = isUserManager
+            ? project.tasks
+            : project.tasks
+                  .where((task) => task.assignee?.id == user.id)
+                  .toList();
         tags = project.tags;
         members = project.members;
         owner = project.owner;
@@ -180,13 +184,16 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   }
 
   Future<void> _onAddUserPressed() async {
+    // Users already members and creator
+    List<String> userIdsToExclude = members.map((user) => user.id).toList();
+    if(owner != null) userIdsToExclude.add(owner!.id);
     final UserDetailed? userToAdd = await showModalBottomSheet<UserDetailed>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (_) => const AddUserBottomSheet(userIdsToExclude: []),
+      builder: (_) => AddUserBottomSheet(userIdsToExclude: userIdsToExclude),
     );
     if (userToAdd == null) return;
     __addMember(userToAdd);
@@ -211,6 +218,42 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       SnackbarInfo.showError(
         context,
         'Erreur lors de l\'ajout de ${user.firstname} ${user.lastname} au projet',
+      );
+    }
+  }
+
+  Future<void> _onDeleteUserPressed(User user) async {
+    final confirm = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => DeleteUserBottomSheet(user: user),
+    );
+
+    if (confirm == true) {
+      _deleteMember(user);
+    }
+  }
+
+  Future<void> _deleteMember(User user) async {
+    try {
+      final projectService = ProjectService();
+      await projectService.removeMemberFromProject(
+        projectId: widget.projectLight.id,
+        userId: user.id,
+      );
+
+      setState(() {
+        members.removeWhere((m) => m.id == user.id);
+      });
+      if (!mounted) return;
+      SnackbarInfo.showSuccess(context, 'Membre retiré du projet');
+    } catch (e) {
+      SnackbarInfo.showError(
+        context,
+        'Erreur lors de la suppression de l\'utilsateur du projet',
       );
     }
   }
@@ -367,10 +410,14 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                                 const SizedBox(width: 12),
                             itemBuilder: (context, index) {
                               final member = members[index];
-                              return ItemMember(
-                                firstName: member.firstname,
-                                lastName: member.lastname,
-                              );
+                              if (isUserManager && isUserOwner) {
+                                return ItemMember(
+                                  user: member,
+                                  onDelete: _onDeleteUserPressed,
+                                );
+                              } else {
+                                return ItemMember(user: member);
+                              }
                             },
                           ),
                         ),
@@ -439,14 +486,33 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    isUserManager ?
-                    'Tâches' : 'Mes tâches',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  // ------------------------------- TASKS
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        isUserManager ? 'Tâches' : 'Mes tâches',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (isUserManager && isUserOwner && projectDetail != null)
+                        InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  TaskFormCreate(project: projectDetail),
+                            ),
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.circlePlus,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                    ],
                   ),
                   SizedBox(height: 10),
                   projectState == LoadState.loading
@@ -469,8 +535,10 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                       : ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: ((context, index) =>
-                              CardTask(task: projectDetail!.tasks[index], displayAssignee: isUserManager,)),
+                          itemBuilder: ((context, index) => CardTask(
+                            task: projectDetail!.tasks[index],
+                            displayAssignee: isUserManager,
+                          )),
                           itemCount: projectDetail!.tasks.length,
                         ),
                 ],

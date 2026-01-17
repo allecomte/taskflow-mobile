@@ -86,4 +86,14 @@ class ProjectService {
       throw Exception('Failed to add the user to the project: ${e.message}');
     }
   }
+
+  Future<void> removeMemberFromProject({required String projectId, required String userId}) async {
+    try{
+      await _dio.delete(
+        'projects/$projectId/members/$userId'
+      );
+    }on DioException catch (e) {
+      throw Exception('Failed to remove the user from the project: ${e.message}');
+    }
+  }
 }

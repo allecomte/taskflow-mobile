@@ -54,6 +54,8 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _startAtController.dispose();
+    _endAtController.dispose();
     super.dispose();
   }
 
