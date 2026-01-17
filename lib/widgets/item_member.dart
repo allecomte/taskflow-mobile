@@ -6,11 +6,7 @@ import 'package:taskflow_mobile/models/user/user.dart';
 class ItemMember extends StatelessWidget {
   final User user;
   final Future<void> Function(User user)? onDelete;
-  const ItemMember({
-    super.key,
-    required this.user,
-    this.onDelete,
-  });
+  const ItemMember({super.key, required this.user, this.onDelete});
 
   String get initials {
     final f = user.firstname.isNotEmpty ? user.firstname[0] : '';
@@ -38,19 +34,33 @@ class ItemMember extends StatelessWidget {
             ),
             if (onDelete != null)
               Positioned(
-                top: -2,
-                right: -18,
+                top: -4,
+                right: -20,
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () => onDelete!(user),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
                     child: Padding(
                       padding: const EdgeInsets.all(4),
-                      child: Icon(
-                        FontAwesomeIcons.circleXmark,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.primary,
+                      child: Container(
+                        width: 32, // zone de tap élargie
+                        height: 32,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(color: Colors.transparent),
+                        child: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface, // fond blanc
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.circleXmark,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                       ),
                     ),
                   ),
