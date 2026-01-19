@@ -10,32 +10,27 @@ class DeleteUserBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 14,
-            bottom: 14,
-          ),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 14, bottom: 14),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
               Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Icon(
-                      FontAwesomeIcons.trash,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
+                padding: EdgeInsets.only(right: 10),
+                child: Icon(
+                  FontAwesomeIcons.trash,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
               Text(
                 'Retirer le membre du projet',
                 style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ],
           ),
@@ -43,6 +38,27 @@ class DeleteUserBottomSheet extends StatelessWidget {
           Text(
             'Voulez-vous retirer définitivement ${user.firstname} ${user.lastname} du projet ?',
             textAlign: TextAlign.left,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(padding: EdgeInsets.only(top: 4),child: Icon(
+                FontAwesomeIcons.triangleExclamation,
+                size: 14,
+                color: Theme.of(context).colorScheme.error,
+              ),)
+              ,
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Un membre étant associé à une tâche ne peut être supprimé.',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 24),
           Row(
@@ -52,8 +68,8 @@ class DeleteUserBottomSheet extends StatelessWidget {
                   onPressed: () => Navigator.pop(context, false),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary
-                    )
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   child: const Text('Annuler'),
                 ),
@@ -65,7 +81,12 @@ class DeleteUserBottomSheet extends StatelessWidget {
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text('Supprimer',style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),),
+                  child: Text(
+                    'Supprimer',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  ),
                 ),
               ),
             ],

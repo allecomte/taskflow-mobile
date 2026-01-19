@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
+import 'package:taskflow_mobile/views/task_detail.dart';
 
 class CardTask extends StatelessWidget {
   final TaskLight task;
@@ -47,6 +48,10 @@ class CardTask extends StatelessWidget {
           ],
         ),
         // trailing: Icon(FontAwesomeIcons.chevronRight),
+        onTap: (){
+          MaterialPageRoute route = MaterialPageRoute(builder: (context) => TaskDetail(taskLight: task));
+          Navigator.of(context).push(route);
+        },
       ),
     );
   }

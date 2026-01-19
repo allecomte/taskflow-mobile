@@ -253,7 +253,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
     } catch (e) {
       SnackbarInfo.showError(
         context,
-        'Erreur lors de la suppression de l\'utilsateur du projet',
+        'Erreur lors de la suppression de l\'utilisateur du projet : $e',
       );
     }
   }

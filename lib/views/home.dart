@@ -9,6 +9,7 @@ import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
 import 'package:taskflow_mobile/views/projects_list.dart';
+import 'package:taskflow_mobile/views/tasks_list.dart';
 // import 'package:taskflow_mobile/services/api/data/user_service.dart';
 // Widgets
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
@@ -243,6 +244,10 @@ class HomeState extends State<Home> {
                             ),
                           ],
                         ),
+                        onTap: () {
+                          MaterialPageRoute route = MaterialPageRoute(builder: (context) => const TasksList());
+                          Navigator.of(context).push(route);
+                        }
                       ),
                       SizedBox(height: 10),
                       tasksState == LoadState.loading

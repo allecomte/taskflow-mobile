@@ -92,7 +92,7 @@ class ProjectService {
         'projects/$projectId/members/$userId'
       );
     }on DioException catch (e) {
-      throw Exception('Failed to remove the user from the project : ${e.message}');
+      throw Exception(e.response?.data['error'] ?? e.message);
     }
   }
 }

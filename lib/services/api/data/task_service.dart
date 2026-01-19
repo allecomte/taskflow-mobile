@@ -47,6 +47,16 @@ class TaskService {
     }
   }
 
+  Future<TaskDetailed> getTaskById(String taskId) async {
+    try{
+      final response = await _dio.get('tasks/$taskId');
+      final task = TaskDetailed.fromJson(response.data);
+      return task;
+    }on DioException catch (e) {
+      throw Exception('Failed to load task: ${e.message}');
+    }
+  }
+
   Future<TaskDetailed> createTask({
     required String title,
     required String description,

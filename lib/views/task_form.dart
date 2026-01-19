@@ -161,6 +161,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
     if (widget.project?.members != null) {
       users = widget.project!.members;
     } else {
+      //TO DO filter _projectSelected.members
       final usersAsync = ref.watch(usersProvider);
       users = usersAsync.when(
         data: (usersDetailed) => usersDetailed.map(User.fromDetailed).toList(),
