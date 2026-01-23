@@ -48,6 +48,31 @@ class ProjectService {
     }
   }
 
+  Future<ProjectLight> createProject({
+    required String title,
+    required String description,
+    required String startAt,
+    String? endAt,
+  }) async {
+    try {
+      final response = await _dio.post(
+        'projects',
+        data: jsonEncode({
+          'title': title,
+          'description': description,
+          'startAt': startAt,
+          'endAt': endAt,
+        }),
+        options: Options(contentType: Headers.jsonContentType),
+      );
+      final data = Map<String, dynamic>.from(response.data);
+      final project = ProjectLight.fromJson(data);
+      return project;
+    } on DioException catch (e) {
+      throw Exception('Failed to update project : ${e.message}');
+    }
+  }
+
   Future<ProjectDetailed> updateProject({
     required String id,
     required String title,
@@ -66,32 +91,33 @@ class ProjectService {
         }),
       );
       final project = ProjectDetailed.fromJson(response.data);
-      print('🟩 RESULT | Project updated: $project');
       return project;
     } on DioException catch (e) {
       throw Exception('Failed to update project : ${e.message}');
     }
   }
 
-  Future<void> addMemberToProject({required String projectId, required String userId}) async {
-    try{
+  Future<void> addMemberToProject({
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
       await _dio.post(
         'projects/$projectId/members',
-        data: jsonEncode({
-          'member': userId
-        }),
+        data: jsonEncode({'member': userId}),
       );
-    }on DioException catch (e) {
+    } on DioException catch (e) {
       throw Exception('Failed to add the user to the project : ${e.message}');
     }
   }
 
-  Future<void> removeMemberFromProject({required String projectId, required String userId}) async {
-    try{
-      await _dio.delete(
-        'projects/$projectId/members/$userId'
-      );
-    }on DioException catch (e) {
+  Future<void> removeMemberFromProject({
+    required String projectId,
+    required String userId,
+  }) async {
+    try {
+      await _dio.delete('projects/$projectId/members/$userId');
+    } on DioException catch (e) {
       throw Exception(e.response?.data['error'] ?? e.message);
     }
   }

@@ -4,19 +4,26 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Enums
 import 'package:taskflow_mobile/enums/task_priority.dart';
 import 'package:taskflow_mobile/enums/task_state.dart';
+import 'package:taskflow_mobile/models/tag/tag.dart';
 // Models
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
+import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
+import 'package:taskflow_mobile/utils/snackbar_info.dart';
 // Views
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/associate_tag_to_task_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/remove_tag_from_task_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/chip_tag.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
+import 'package:taskflow_mobile/widgets/skeleton/small_list_skeleton.dart';
 
 class TaskDetail extends ConsumerStatefulWidget {
   final TaskLight taskLight;
@@ -31,6 +38,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
   TaskDetailed? taskDetail;
   String? description;
   User? assignee;
+  List<Tag> tags = [];
 
   @override
   void initState() {
@@ -50,12 +58,61 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
         taskDetail = task;
         description = task.description;
         assignee = task.assignee;
+        tags = task.tags;
         taskState = LoadState.success;
       });
     } catch (e) {
       setState(() {
         taskState = LoadState.error;
       });
+    }
+  }
+
+  Future<void> _onAssociateTagPressed() async {
+    final tagAssociated = await showModalBottomSheet<Tag>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => AssociateTagToTaskBottomSheet(taskDetail: taskDetail!),
+    );
+    if(tagAssociated == null) return;
+    _associateOrRemoveTag(tagAssociated, true);
+  }
+
+  Future<void> _onRemoveTagPressed(Tag tag) async {
+    final confirm = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => RemoveTagFromTaskBottomSheet(tagName: tag.name),
+    );
+
+    if (confirm == true) {
+      _associateOrRemoveTag(tag, false);
+    }
+  }
+
+  Future<void> _associateOrRemoveTag(Tag tag, bool toAssociate) async {
+    try{
+      final tagService = TagService();
+      await tagService.associateOrDissociateTagWithTask(taskId: widget.taskLight.id, tagId: tag.id);
+      if(toAssociate){
+        setState(() {
+          tags.add(tag);
+        });
+      }else{
+        setState(() {
+          tags.remove(tag);
+        });
+      }
+      if (!mounted) return;
+      SnackbarInfo.showSuccess(context, 'Tag ${toAssociate ?  'associé à':'retiré de'} la tâche');
+    }catch (e) {
+      SnackbarInfo.showError(context, 'Erreur lors ${toAssociate ?  'l\'association ':'du retrait'} du tag');
     }
   }
 
@@ -174,6 +231,63 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                         ),
                   SizedBox(height: 20),
                   // ------------------------------- TAG
+                  Text(
+                    'Tags',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  taskState == LoadState.loading ? SmallListSkeleton() : taskState == LoadState.error ? Text(
+                          'Erreur lors du chargement des tags',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ): tags.isEmpty
+                      ? Text(
+                          "Le projet ne possède aucun tag.",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )
+                      : Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: tags.map((tag) {
+                            return ChipTag(
+                              tag: tag,
+                              onDelete: _onRemoveTagPressed,
+                            );
+                          }).toList(),
+                        ),
+                  SizedBox(height: 10),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: taskDetail != null ? _onAssociateTagPressed : null,
+                    child: Chip(
+                      label: Text(
+                        'Associer un tag',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      avatar: Icon(
+                        FontAwesomeIcons.plus,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

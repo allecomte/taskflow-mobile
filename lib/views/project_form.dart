@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
@@ -8,16 +9,16 @@ import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
 
-class ProjectFormUpdate extends StatefulWidget {
-  final ProjectDetailed project;
+class ProjectForm extends ConsumerStatefulWidget {
+  final ProjectDetailed? project;
 
-  const ProjectFormUpdate({super.key, required this.project});
+  const ProjectForm({super.key, this.project});
 
   @override
-  State<StatefulWidget> createState() => ProjectFormUpdateState();
+  ConsumerState<ProjectForm> createState() => ProjectFormUpdateState();
 }
 
-class ProjectFormUpdateState extends State<ProjectFormUpdate> {
+class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _titleController;
@@ -32,19 +33,24 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.project.title);
+    _titleController = TextEditingController(text: widget.project?.title ?? '');
     _descriptionController = TextEditingController(
-      text: widget.project.description,
+      text: widget.project?.description ?? '',
     );
-    _startAtController = TextEditingController(
-      text: formatDateFr(widget.project.startAt),
-    );
-    _startAtSelected = DateTime.parse(widget.project.startAt);
-    if (widget.project.endAt != null) {
-      _endAtController = TextEditingController(
-        text: formatDateFr(widget.project.endAt!),
+    if (widget.project?.startAt != null) {
+      _startAtController = TextEditingController(
+        text: formatDateFr(widget.project!.startAt),
       );
-      _endAtSelected = DateTime.parse(widget.project.endAt!);
+      _startAtSelected = DateTime.parse(widget.project!.startAt);
+    } else {
+      _startAtController = TextEditingController();
+    }
+
+    if (widget.project?.endAt != null) {
+      _endAtController = TextEditingController(
+        text: formatDateFr(widget.project!.endAt!),
+      );
+      _endAtSelected = DateTime.parse(widget.project!.endAt!);
     } else {
       _endAtController = TextEditingController();
     }
@@ -65,25 +71,40 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
     });
     try {
       final projectService = ProjectService();
-      final project = await projectService.updateProject(
-        id: widget.project.id,
-        title: _titleController.text,
-        description: _descriptionController.text,
-        startAt: formatDateTimeToStringApi(_startAtSelected)!,
-        endAt: formatDateTimeToStringApi(_endAtSelected),
-      );
-      MaterialPageRoute route = MaterialPageRoute(
-        builder: (context) =>
-            ProjectDetail(projectLight: ProjectLight.fromDetailed(project)),
-      );
-      if (!mounted) return;
-      Navigator.of(context)
-        ..pop()
-        ..pushReplacement(route);
+      if (widget.project?.id != null) {
+        final project = await projectService.updateProject(
+          id: widget.project!.id,
+          title: _titleController.text,
+          description: _descriptionController.text,
+          startAt: formatDateTimeToStringApi(_startAtSelected)!,
+          endAt: formatDateTimeToStringApi(_endAtSelected),
+        );
+        MaterialPageRoute route = MaterialPageRoute(
+          builder: (context) =>
+              ProjectDetail(projectLight: ProjectLight.fromDetailed(project)),
+        );
+        if (!mounted) return;
+        Navigator.of(context)
+          ..pop()
+          ..pushReplacement(route);
+      } else {
+        final project = await projectService.createProject(
+          title: _titleController.text,
+          description: _descriptionController.text,
+          startAt: formatDateTimeToStringApi(_startAtSelected)!,
+          endAt: formatDateTimeToStringApi(_endAtSelected),
+        );
+        if (!mounted) return;
+        MaterialPageRoute route = MaterialPageRoute(
+          builder: (context) =>
+              ProjectDetail(projectLight: project),
+        );
+        Navigator.of(context).pushReplacement(route);
+      }
     } catch (e) {
       SnackbarInfo.showError(
         context,
-        'Erreur lors de la modification du projet',
+        'Erreur lors de la ${widget.project?.id != null ? 'modification' : 'création'} du projet',
       );
     } finally {
       setState(() {
@@ -95,7 +116,11 @@ class ProjectFormUpdateState extends State<ProjectFormUpdate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarCurrentView(title: widget.project.title),
+      appBar: AppBarCurrentView(
+        title: widget.project?.id != null
+            ? 'Modification d\'un projet'
+            : 'Création d\'une projet',
+      ),
       bottomNavigationBar: BottomAppBarMenu(currentView: 'project'),
       body: SafeArea(
         child: SingleChildScrollView(

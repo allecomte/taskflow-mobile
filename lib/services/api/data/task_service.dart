@@ -67,18 +67,6 @@ class TaskService {
     List<String>? tags,
   }) async {
     try {
-      print('----- DATA');
-      print(
-        jsonEncode({
-          'title': title,
-          'description': description,
-          'dueAt': dueAt,
-          'priority': priority,
-          'project': project,
-          'assignee': assignee,
-          'tags': tags ?? [],
-        }),
-      );
       final response = await _dio.post(
         'tasks',
         data: jsonEncode({

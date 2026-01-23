@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
+import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/task.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 
@@ -12,6 +13,7 @@ class TaskDetailed extends Task {
   ProjectLight project;
   @JsonKey(name: 'assignee')
   User assignee;
+  final List<Tag> tags;
 
   TaskDetailed({
     required super.id,
@@ -22,6 +24,7 @@ class TaskDetailed extends Task {
     required super.state,
     required this.project,
     required this.assignee,
+    this.tags = const []
   });
 
   factory TaskDetailed.fromJson(Map<String, dynamic> json) {
@@ -34,6 +37,11 @@ class TaskDetailed extends Task {
       description: json['description'],
       project: ProjectLight.fromJson(json['project']),
       assignee: User.fromJson(json['assignee']),
+      tags:
+          (json['tags'] as List<dynamic>?)
+              ?.map((e) => Tag.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          []
     );
   }
 
@@ -48,6 +56,7 @@ class TaskDetailed extends Task {
       'description': description,
       'project': project.toJson(),
       'assignee': assignee.toJson(),
+      'tags': tags.map((e) => e.toJson()).toList(),
     };
   }
 }

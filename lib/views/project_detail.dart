@@ -16,7 +16,7 @@ import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_info.dart';
 // Views
 import 'package:taskflow_mobile/views/home.dart';
-import 'package:taskflow_mobile/views/project_form_update.dart';
+import 'package:taskflow_mobile/views/project_form.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 // Widgets
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
@@ -283,7 +283,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              ProjectFormUpdate(project: projectDetail!),
+                              ProjectForm(project: projectDetail!),
                         ),
                       );
                     },

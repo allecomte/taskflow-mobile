@@ -188,7 +188,6 @@ class TaskFormState extends ConsumerState<TaskForm> {
         }
       }
     } catch (e) {
-      print('error $e');
       if (!mounted) return;
       SnackbarInfo.showError(
         context,

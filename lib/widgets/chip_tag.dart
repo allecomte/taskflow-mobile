@@ -4,13 +4,13 @@ import 'package:taskflow_mobile/models/tag/tag.dart';
 
 class ChipTag extends StatelessWidget {
   final Tag tag;
-  final Future<void>  Function(Tag tag) onEdit;
+  final Future<void>  Function(Tag tag)? onEdit;
   final Future<void>  Function(Tag tag) onDelete;
 
   const ChipTag({
     super.key,
     required this.tag,
-    required this.onEdit,
+    this.onEdit,
     required this.onDelete,
   });
 
@@ -28,7 +28,7 @@ class ChipTag extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () => onEdit(tag),
+          onTap: () => onEdit != null ? () => onEdit!(tag) : null,
           child: Padding(
             padding: EdgeInsets.only(left: 12, top: 6, bottom: 6, right: 6),
             child: Row(

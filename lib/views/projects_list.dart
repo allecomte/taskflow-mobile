@@ -7,6 +7,7 @@ import 'package:taskflow_mobile/enums/load_state.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
+import 'package:taskflow_mobile/views/project_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_project.dart';
@@ -67,12 +68,12 @@ class ProjectsListState extends ConsumerState<ProjectsList> {
                   padding: EdgeInsets.only(right: 10),
                   child: IconButton(
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => TaskForm(task: taskDetail!),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ProjectForm(),
+                        ),
+                      );
                     },
                     icon: Icon(
                       FontAwesomeIcons.circlePlus,

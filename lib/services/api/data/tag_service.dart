@@ -32,4 +32,23 @@ class TagService {
       throw Exception('Failed to delete tag: ${e.message}');
     }
   }
+
+  Future<void> associateOrDissociateTagWithTask({required String taskId,required String tagId}) async {
+    try {
+      await _dio.post('tasks/$taskId/tags/$tagId');
+    } on DioException catch (e) {
+      throw Exception('Failed to associate or dissociate the tag with the task : ${e.message}');
+    }
+  }
+
+  Future<List<Tag>> getTagsByProject({required String projectId}) async {
+    try{
+      final response = await _dio.get('projects/$projectId/tags');
+      final List<dynamic> data = response.data;
+      return data.map((json) => Tag.fromJson(json)).toList();
+    }on DioException catch (e) {
+      throw Exception('Failed to load tasks: ${e.message}');
+    }
+    
+  }
 }

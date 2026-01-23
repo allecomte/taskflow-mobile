@@ -8,13 +8,18 @@ part of 'task_detailed.dart';
 
 TaskDetailed _$TaskDetailedFromJson(Map<String, dynamic> json) => TaskDetailed(
   id: json['_id'] as String,
-  state: json['state'] as String,
-  priority: json['priority'] as String,
-  dueAt: json['dueAt'] as String,
   title: json['title'] as String,
   description: json['description'] as String,
+  dueAt: json['dueAt'] as String,
+  priority: json['priority'] as String,
+  state: json['state'] as String,
   project: ProjectLight.fromJson(json['project'] as Map<String, dynamic>),
   assignee: User.fromJson(json['assignee'] as Map<String, dynamic>),
+  tags:
+      (json['tags'] as List<dynamic>?)
+          ?.map((e) => Tag.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$TaskDetailedToJson(TaskDetailed instance) =>
@@ -27,4 +32,5 @@ Map<String, dynamic> _$TaskDetailedToJson(TaskDetailed instance) =>
       'description': instance.description,
       'project': instance.project,
       'assignee': instance.assignee,
+      'tags': instance.tags,
     };
