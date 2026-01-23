@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// Enums
+import 'package:taskflow_mobile/enums/task_priority.dart';
+import 'package:taskflow_mobile/enums/task_state.dart';
+// Models
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
+import 'package:taskflow_mobile/models/user/user.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
+// Views
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
@@ -25,6 +30,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
   LoadState taskState = LoadState.loading;
   TaskDetailed? taskDetail;
   String? description;
+  User? assignee;
 
   @override
   void initState() {
@@ -43,6 +49,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
       setState(() {
         taskDetail = task;
         description = task.description;
+        assignee = task.assignee;
         taskState = LoadState.success;
       });
     } catch (e) {
@@ -99,7 +106,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   taskState == LoadState.loading
-                      ? LineSkeleton()
+                      ? LineSkeleton(context: context)
                       : taskState == LoadState.error || description == null
                       ? Text(
                           'Erreur lors du chargement des donnés',
@@ -107,8 +114,14 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                             color: Theme.of(context).colorScheme.error,
                           ),
                         )
-                      : Text(description!),
+                      : Text(
+                          description!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                   SizedBox(height: 20),
+                  // ------------------------------- DUE AT
                   Row(
                     children: [
                       Icon(
@@ -126,6 +139,41 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 20),
+                  // ------------------------------- PRIORITY
+                  Text(
+                    'Priorité : ${TaskPriority.values.firstWhere((priority) => priority.value == task.priority).label}',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  // ------------------------------- STATE
+                  Text(
+                    'État : ${TaskState.values.firstWhere((state) => state.value == task.state).label}',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  // ------------------------------- ASSIGNEE
+                  taskState == LoadState.loading
+                      ? LineSkeleton(context: context)
+                      : taskState == LoadState.error || assignee == null
+                      ? Text(
+                          'Erreur lors du chargement des donnés',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        )
+                      : Text(
+                          'Assignée : ${assignee!.firstname} ${assignee!.lastname}',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                  SizedBox(height: 20),
+                  // ------------------------------- TAG
                 ],
               ),
             ),

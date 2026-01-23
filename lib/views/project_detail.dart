@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// Models
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 import 'package:taskflow_mobile/models/user/user_detailed.dart';
+// Services
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/tag_service.dart';
+// Utils
 import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_info.dart';
+// Views
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/project_form_update.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
+// Widgets
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/add_tag_bottom_sheet.dart';
@@ -26,7 +32,6 @@ import 'package:taskflow_mobile/widgets/item_member.dart';
 import 'package:taskflow_mobile/widgets/skeleton/avatar_skeleton.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/widgets/skeleton/small_list_skeleton.dart';
 
@@ -336,7 +341,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                   ),
                   SizedBox(height: 20),
                   projectState == LoadState.loading
-                      ? LineSkeleton()
+                      ? LineSkeleton(context: context)
                       : projectState == LoadState.error
                       ? Text(
                           'Erreur lors du chargement des donnés',

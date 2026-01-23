@@ -2,22 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Enums
 import 'package:taskflow_mobile/enums/load_state.dart';
-import 'package:taskflow_mobile/enums/priority.dart';
+import 'package:taskflow_mobile/enums/task_priority.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
-import 'package:taskflow_mobile/models/user/user_detailed.dart';
 import 'package:taskflow_mobile/providers/users_provider.dart';
+// Services
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
+// Utils
 import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_info.dart';
+// Views
 import 'package:taskflow_mobile/views/project_detail.dart';
 import 'package:taskflow_mobile/views/projects_list.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
+import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 
 class TaskForm extends ConsumerStatefulWidget {
   final ProjectDetailed? project;
@@ -37,8 +40,10 @@ class TaskFormState extends ConsumerState<TaskForm> {
   late final TextEditingController _descriptionController;
   late final TextEditingController _dueAtController;
   DateTime? _dueAtSelected;
-  Priority? _prioritySelected;
+  TaskPriority? _prioritySelected;
   ProjectLight? _projectSelected;
+  List<User> allUsers = [];
+  List<User> userOptions = [];
   User? _userSelected;
 
   bool _isProcessing = false;
@@ -46,7 +51,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
   @override
   void initState() {
     super.initState();
-    fetchProjects();
+
     _titleController = TextEditingController(text: widget.task?.title ?? '');
     _descriptionController = TextEditingController(
       text: widget.task?.description ?? '',
@@ -60,13 +65,11 @@ class TaskFormState extends ConsumerState<TaskForm> {
       _dueAtController = TextEditingController();
     }
     if (widget.task?.priority != null) {
-      _prioritySelected = Priority.values.firstWhere(
+      _prioritySelected = TaskPriority.values.firstWhere(
         (priority) => priority.value == widget.task?.priority,
       );
     }
-    if (widget.task?.assignee != null) {
-      _userSelected = widget.task?.assignee;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => loadData());
   }
 
   @override
@@ -75,6 +78,14 @@ class TaskFormState extends ConsumerState<TaskForm> {
     _descriptionController.dispose();
     _dueAtController.dispose();
     super.dispose();
+  }
+
+  Future<void> loadData() async {
+    final usersAsync = await ref.read(usersProvider.future);
+    setState(() {
+      allUsers = usersAsync.map(User.fromDetailed).toList();
+    });
+    await fetchProjects();
   }
 
   Future<void> fetchProjects() async {
@@ -86,9 +97,27 @@ class TaskFormState extends ConsumerState<TaskForm> {
         sort: '-createdAt',
       );
       if (widget.project?.id != null) {
+        ProjectLight projectSelected = dataProjects.data.firstWhere(
+          (project) => project.id == widget.project!.id,
+        );
         setState(() {
-          _projectSelected = dataProjects.data.firstWhere(
-            (project) => project.id == widget.project!.id,
+          _projectSelected = projectSelected;
+          userOptions = allUsers
+              .where((user) => projectSelected.members.contains(user.id))
+              .toList();
+        });
+      }
+      if (widget.task?.project.id != null) {
+        ProjectLight projectSelected = dataProjects.data.firstWhere(
+          (project) => project.id == widget.task!.project.id,
+        );
+        setState(() {
+          _projectSelected = projectSelected;
+          userOptions = allUsers
+              .where((user) => projectSelected.members.contains(user.id))
+              .toList();
+          _userSelected = userOptions.firstWhere(
+            (user) => user.id == widget.task?.assignee.id,
           );
         });
       }
@@ -136,9 +165,11 @@ class TaskFormState extends ConsumerState<TaskForm> {
             ),
           );
           Navigator.of(context).pushReplacement(route);
-        }else{
+        } else {
           if (!mounted) return;
-          MaterialPageRoute route = MaterialPageRoute(builder: (context) => const ProjectsList());
+          MaterialPageRoute route = MaterialPageRoute(
+            builder: (context) => const ProjectsList(),
+          );
           Navigator.of(context).pushReplacement(route);
         }
       }
@@ -157,20 +188,24 @@ class TaskFormState extends ConsumerState<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    final List<User> users;
-    if (widget.project?.members != null) {
-      users = widget.project!.members;
-    } else {
-      //TO DO filter _projectSelected.members
-      final usersAsync = ref.watch(usersProvider);
-      users = usersAsync.when(
-        data: (usersDetailed) => usersDetailed.map(User.fromDetailed).toList(),
-        loading: () => <User>[],
-        error: (_, _) => <User>[],
-      );
-    }
+    // final usersAsync = ref.watch(usersProvider);
+    //   usersAsync.when(
+    //   data: (usersDetailed) {
+    //     setState(() {
+    //       allUsers = usersDetailed.map(User.fromDetailed).toList();
+    //     });
+    //     print('---- RRRRRRR -----------');
+    //     fetchProjects();
+    //   },
+    //   loading: () => <User>[],
+    //   error: (_, _) => <User>[],
+    // );
     return Scaffold(
-      appBar: AppBarCurrentView(title: 'Création d\'une tâche'),
+      appBar: AppBarCurrentView(
+        title: widget.task?.id != null
+            ? 'Modification d\'une tâche'
+            : 'Création d\'une tâche',
+      ),
       bottomNavigationBar: BottomAppBarMenu(currentView: 'task'),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -247,9 +282,10 @@ class TaskFormState extends ConsumerState<TaskForm> {
                       // ------------------------ PRIORITY
                       Padding(
                         padding: EdgeInsetsGeometry.only(bottom: 30),
-                        child: DropdownButtonFormField<Priority>(
-                          items: Priority.values.map((priority) {
-                            return DropdownMenuItem<Priority>(
+                        child: DropdownButtonFormField<TaskPriority>(
+                          initialValue: _prioritySelected,
+                          items: TaskPriority.values.map((priority) {
+                            return DropdownMenuItem<TaskPriority>(
                               value: priority,
                               child: Text(priority.label),
                             );
@@ -273,58 +309,99 @@ class TaskFormState extends ConsumerState<TaskForm> {
                       // ------------------------ PROJECT
                       Padding(
                         padding: EdgeInsetsGeometry.only(bottom: 30),
-                        child: DropdownButtonFormField<ProjectLight>(
-                          initialValue: _projectSelected,
-                          items: projects.map((project) {
-                            return DropdownMenuItem<ProjectLight>(
-                              value: project,
-                              child: Text(project.title),
-                            );
-                          }).toList(),
-                          onChanged: widget.project != null
-                              ? null
-                              : (value) {
-                                  setState(() {
-                                    _projectSelected = value;
-                                  });
+                        child: projectsState == LoadState.loading
+                            ? LineSkeleton(context: context)
+                            : projectsState == LoadState.error
+                            ? Text(
+                                'Erreur lors du chargement des donnés',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                              )
+                            : DropdownButtonFormField<ProjectLight>(
+                                initialValue: _projectSelected,
+                                items: projects.map((project) {
+                                  return DropdownMenuItem<ProjectLight>(
+                                    value: project,
+                                    child: Text(project.title),
+                                  );
+                                }).toList(),
+                                onChanged:
+                                    (widget.project != null ||
+                                        widget.task != null)
+                                    ? null
+                                    : (value) {
+                                        setState(() {
+                                          _projectSelected = value;
+                                          if (value != null) {
+                                            userOptions = allUsers
+                                                .where(
+                                                  (user) => value.members
+                                                      .contains(user.id),
+                                                )
+                                                .toList();
+                                            if (_userSelected != null &&
+                                                !allUsers
+                                                    .where(
+                                                      (user) => value.members
+                                                          .contains(user.id),
+                                                    )
+                                                    .toList()
+                                                    .contains(_userSelected)) {
+                                              _userSelected = null;
+                                            }
+                                          }
+                                        });
+                                      },
+                                decoration: const InputDecoration(
+                                  labelText: 'Projet',
+                                ),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Le projet est obligatoire';
+                                  }
+                                  return null;
                                 },
-                          decoration: const InputDecoration(
-                            labelText: 'Projet',
-                          ),
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Le projet est obligatoire';
-                            }
-                            return null;
-                          },
-                        ),
+                              ),
                       ),
 
                       // ------------------------ ASSIGNEE
                       Padding(
                         padding: EdgeInsetsGeometry.only(bottom: 30),
-                        child: DropdownButtonFormField<User>(
-                          items: users.map((user) {
-                            return DropdownMenuItem<User>(
-                              value: user,
-                              child: Text('${user.firstname} ${user.lastname}'),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _userSelected = value;
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Personne assignée',
-                          ),
-                          validator: (value) {
-                            if (value == null) {
-                              return 'La personne assignée est obligatoire';
-                            }
-                            return null;
-                          },
-                        ),
+                        child: projectsState == LoadState.loading
+                            ? LineSkeleton(context: context)
+                            : projectsState == LoadState.error
+                            ? Text(
+                                'Erreur lors du chargement des donnés',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                              )
+                            : DropdownButtonFormField<User>(
+                                initialValue: _userSelected,
+                                items: userOptions.map((user) {
+                                  return DropdownMenuItem<User>(
+                                    value: user,
+                                    child: Text(
+                                      '${user.firstname} ${user.lastname}',
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _userSelected = value;
+                                  });
+                                },
+                                decoration: const InputDecoration(
+                                  labelText: 'Personne assignée',
+                                ),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'La personne assignée est obligatoire';
+                                  }
+                                  return null;
+                                },
+                              ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

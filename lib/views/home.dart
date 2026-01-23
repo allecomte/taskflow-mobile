@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Enums
 // import 'package:taskflow_mobile/enums/load_state.dart';
@@ -8,25 +9,25 @@ import 'package:taskflow_mobile/models/task/task_light.dart';
 // Services
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
+// Views
 import 'package:taskflow_mobile/views/projects_list.dart';
 import 'package:taskflow_mobile/views/tasks_list.dart';
-// import 'package:taskflow_mobile/services/api/data/user_service.dart';
 // Widgets
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_project.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
-class Home extends StatefulWidget {
+class Home extends ConsumerStatefulWidget {
   const Home({super.key});
 
   @override
-  State<StatefulWidget> createState() => HomeState();
+  ConsumerState<Home> createState() => HomeState();
 }
 
 enum LoadState { loading, success, error }
 
-class HomeState extends State<Home> {
+class HomeState extends ConsumerState<Home> {
   LoadState projectsState = LoadState.loading;
   LoadState tasksState = LoadState.loading;
 

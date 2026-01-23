@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/profile.dart';
 import 'package:taskflow_mobile/views/projects_list.dart';
+import 'package:taskflow_mobile/views/tasks_list.dart';
 
 class BottomAppBarMenu extends StatelessWidget {
   final String currentView;
@@ -52,7 +53,12 @@ class BottomAppBarMenu extends StatelessWidget {
             ),
             // -------- TASKS BUTTON
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                MaterialPageRoute route = MaterialPageRoute(
+                  builder: (context) => const TasksList(),
+                );
+                Navigator.of(context).push(route);
+              },
               icon: Icon(
                 FontAwesomeIcons.list,
                 size: 35,

@@ -12,6 +12,9 @@ ProjectLight _$ProjectLightFromJson(Map<String, dynamic> json) => ProjectLight(
   description: json['description'] as String,
   startAt: json['startAt'] as String,
   endAt: json['endAt'] as String?,
+  members:
+      (json['members'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
   tasks:
       (json['tasks'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
@@ -30,6 +33,7 @@ Map<String, dynamic> _$ProjectLightToJson(ProjectLight instance) =>
       'isArchived': instance.isArchived,
       'startAt': instance.startAt,
       'endAt': instance.endAt,
+      'members': instance.members,
       'tasks': instance.tasks,
       'myTasks': instance.myTasks,
     };

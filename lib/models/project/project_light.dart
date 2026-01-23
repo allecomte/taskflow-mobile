@@ -7,6 +7,7 @@ part 'project_light.g.dart';
 
 @JsonSerializable()
 class ProjectLight extends Project {
+  final List<String> members;
   final List<String> tasks;
   final List<Task> myTasks;
 
@@ -16,6 +17,7 @@ class ProjectLight extends Project {
     required super.description,
     required super.startAt,
     super.endAt,
+    this.members = const [],
     this.tasks = const [],
     this.myTasks = const [],
   });
@@ -27,6 +29,9 @@ class ProjectLight extends Project {
       description: json['description'],
       startAt: json['startAt'],
       endAt: json['endAt'] as String? ?? '',
+      members:
+          (json['members'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+          [],
       tasks:
           (json['tasks'] as List<dynamic>?)?.map((e) => e as String).toList() ??
           [],
@@ -46,6 +51,7 @@ class ProjectLight extends Project {
       'description': description,
       'startAt': startAt,
       'endAt': endAt,
+      'members': members,
       'tasks': tasks,
       'myTasks': myTasks.map((e) => e.toJson()).toList(),
     };
@@ -58,6 +64,7 @@ class ProjectLight extends Project {
     description: project.description,
     startAt: project.startAt,
     endAt: project.endAt,
+    members: project.members.map((t) => t.id).toList(),
     tasks: project.tasks.map((t) => t.id).toList(),
     myTasks: const [], // filtrer selon l'utilisateur ?
   );
