@@ -15,11 +15,11 @@ class TaskDetailed extends Task {
 
   TaskDetailed({
     required super.id,
-    required super.state,
-    required super.priority,
-    required super.dueAt,
     required super.title,
     required this.description,
+    required super.dueAt,
+    required super.priority,
+    required super.state,
     required this.project,
     required this.assignee,
   });

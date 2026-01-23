@@ -7,6 +7,7 @@ import 'package:taskflow_mobile/enums/task_priority.dart';
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
+import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 import 'package:taskflow_mobile/providers/users_provider.dart';
 // Services
@@ -18,6 +19,7 @@ import 'package:taskflow_mobile/utils/snackbar_info.dart';
 // Views
 import 'package:taskflow_mobile/views/project_detail.dart';
 import 'package:taskflow_mobile/views/projects_list.dart';
+import 'package:taskflow_mobile/views/task_detail.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
@@ -147,9 +149,15 @@ class TaskFormState extends ConsumerState<TaskForm> {
           priority: _prioritySelected!.value,
           assignee: _userSelected!.id,
         );
-        //TODO redirect to task detailed
+        if(!mounted) return;
+        MaterialPageRoute route = MaterialPageRoute(
+            builder: (context) => TaskDetail(
+              taskLight: TaskLight.fromDetailed(task),
+            ),
+          );
+          Navigator.of(context).pushReplacement(route);
       } else {
-        final task = await taskService.createTask(
+        await taskService.createTask(
           title: _titleController.text,
           description: _descriptionController.text,
           dueAt: formatDateTimeToStringApi(_dueAtSelected)!,
@@ -157,16 +165,22 @@ class TaskFormState extends ConsumerState<TaskForm> {
           project: _projectSelected!.id,
           assignee: _userSelected!.id,
         );
+         if (!mounted) return;
         if (widget.project != null) {
-          if (!mounted) return;
           MaterialPageRoute route = MaterialPageRoute(
             builder: (context) => ProjectDetail(
               projectLight: ProjectLight.fromDetailed(widget.project!),
             ),
           );
           Navigator.of(context).pushReplacement(route);
-        } else {
-          if (!mounted) return;
+        } else if(_projectSelected != null){
+          MaterialPageRoute route = MaterialPageRoute(
+            builder: (context) => ProjectDetail(
+              projectLight: _projectSelected!,
+            ),
+          );
+          Navigator.of(context).pushReplacement(route);
+        }else{
           MaterialPageRoute route = MaterialPageRoute(
             builder: (context) => const ProjectsList(),
           );
@@ -174,6 +188,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
         }
       }
     } catch (e) {
+      print('error $e');
       if (!mounted) return;
       SnackbarInfo.showError(
         context,
@@ -188,18 +203,6 @@ class TaskFormState extends ConsumerState<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    // final usersAsync = ref.watch(usersProvider);
-    //   usersAsync.when(
-    //   data: (usersDetailed) {
-    //     setState(() {
-    //       allUsers = usersDetailed.map(User.fromDetailed).toList();
-    //     });
-    //     print('---- RRRRRRR -----------');
-    //     fetchProjects();
-    //   },
-    //   loading: () => <User>[],
-    //   error: (_, _) => <User>[],
-    // );
     return Scaffold(
       appBar: AppBarCurrentView(
         title: widget.task?.id != null

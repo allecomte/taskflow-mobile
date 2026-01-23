@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/enums/load_state.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
+import 'package:taskflow_mobile/views/task_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
@@ -51,9 +53,33 @@ class TasksListState extends ConsumerState<TasksList> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    // final isUserManager = user!.roles.contains('ROLE_MANAGER');
+    final isUserManager = user!.roles.contains('ROLE_MANAGER');
     return Scaffold(
-      appBar: AppBarCurrentView(title: 'Mes tâches'),
+      appBar: AppBarCurrentView(
+        title: 'Mes tâches',
+        actions: isUserManager
+            ? [
+                Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TaskForm(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      FontAwesomeIcons.circlePlus,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ]
+            : [],
+      ),
       bottomNavigationBar: BottomAppBarMenu(currentView: 'task'),
       body: SafeArea(
         child: RefreshIndicator(

@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taskflow_mobile/models/task/task.dart';
+import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 
 part 'task_light.g.dart';
@@ -23,11 +24,13 @@ class TaskLight extends Task {
       state: json['state'],
       priority: json['priority'],
       dueAt: json['dueAt'],
-      assignee: json['assignee'] != null ? User.fromJson(json['assignee']) : null,
+      assignee: json['assignee'] != null
+          ? User.fromJson(json['assignee'])
+          : null,
     );
   }
   @override
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       '_id': id,
       'title': title,
@@ -36,5 +39,15 @@ class TaskLight extends Task {
       'dueAt': dueAt,
       'assignee': assignee?.id,
     };
+  }
+
+  factory TaskLight.fromDetailed(TaskDetailed task) {
+    return TaskLight(
+      id: task.id,
+      title: task.title,
+      state: task.state,
+      priority: task.priority,
+      dueAt: task.dueAt,
+    );
   }
 }

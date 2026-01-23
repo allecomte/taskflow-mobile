@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Enums
 import 'package:taskflow_mobile/enums/load_state.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_light.dart';
+import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_project.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
-class ProjectsList extends StatefulWidget {
+class ProjectsList extends ConsumerStatefulWidget {
   const ProjectsList({super.key});
 
   @override
-  State<StatefulWidget> createState() => ProjectsListState();
+  ConsumerState<ConsumerStatefulWidget> createState() => ProjectsListState();
 }
 
-class ProjectsListState extends State<ProjectsList> {
+class ProjectsListState extends ConsumerState<ProjectsList> {
   LoadState projectsState = LoadState.loading;
   List<ProjectLight> projects = [];
 
@@ -54,8 +57,32 @@ class ProjectsListState extends State<ProjectsList> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    final isUserManager = user!.roles.contains('ROLE_MANAGER');
     return Scaffold(
-      appBar: AppBarCurrentView(title: 'Mes Projets'),
+      appBar: AppBarCurrentView(
+        title: 'Mes Projets',
+        actions: isUserManager ? [
+          Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: IconButton(
+                    onPressed: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => TaskForm(task: taskDetail!),
+                      //   ),
+                      // );
+                    },
+                    icon: Icon(
+                      FontAwesomeIcons.circlePlus,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                )
+        ] : [],
+        ),
       bottomNavigationBar: BottomAppBarMenu(currentView: 'project'),
       body: SafeArea(
         child: RefreshIndicator(
