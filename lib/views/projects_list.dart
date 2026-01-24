@@ -7,7 +7,6 @@ import 'package:taskflow_mobile/enums/load_state.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
-import 'package:taskflow_mobile/utils/snackbar_info.dart';
 import 'package:taskflow_mobile/views/project_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
@@ -15,8 +14,7 @@ import 'package:taskflow_mobile/widgets/card_project.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
 class ProjectsList extends ConsumerStatefulWidget {
-  final String? messageSucess;
-  const ProjectsList({super.key, this.messageSucess});
+  const ProjectsList({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => ProjectsListState();
@@ -29,13 +27,6 @@ class ProjectsListState extends ConsumerState<ProjectsList> {
   @override
   void initState() {
     super.initState();
-
-  if (widget.messageSucess != null) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      SnackbarInfo.showSuccess(context, widget.messageSucess!);
-    });
-  }
-
     fetchProjects();
   }
 

@@ -13,7 +13,7 @@ import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
-import 'package:taskflow_mobile/utils/snackbar_info.dart';
+import 'package:taskflow_mobile/utils/snackbar_global.dart';
 // Views
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
@@ -110,9 +110,9 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
         });
       }
       if (!mounted) return;
-      SnackbarInfo.showSuccess(context, 'Tag ${toAssociate ?  'associé à':'retiré de'} la tâche');
+      SnackbarGlobal.showSuccess('Tag ${toAssociate ?  'associé à':'retiré de'} la tâche');
     }catch (e) {
-      SnackbarInfo.showError(context, 'Erreur lors ${toAssociate ?  'l\'association ':'du retrait'} du tag');
+      SnackbarGlobal.showError('Erreur lors ${toAssociate ?  'l\'association ':'du retrait'} du tag');
     }
   }
 

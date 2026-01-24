@@ -11,8 +11,12 @@ void main() {
     );
 }
 
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,6 +26,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TaskFlow',
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1C845C)),
       ),

@@ -15,7 +15,7 @@ import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
 // Utils
 import 'package:taskflow_mobile/utils/format_date.dart';
-import 'package:taskflow_mobile/utils/snackbar_info.dart';
+import 'package:taskflow_mobile/utils/snackbar_global.dart';
 // Views
 import 'package:taskflow_mobile/views/project_detail.dart';
 import 'package:taskflow_mobile/views/projects_list.dart';
@@ -189,8 +189,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
       }
     } catch (e) {
       if (!mounted) return;
-      SnackbarInfo.showError(
-        context,
+      SnackbarGlobal.showError(
         'Erreur lors de la ${widget.task?.id != null ? 'modification' : 'création'} de la tâche',
       );
     } finally {

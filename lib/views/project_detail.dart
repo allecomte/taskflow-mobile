@@ -13,7 +13,7 @@ import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 // Utils
 import 'package:taskflow_mobile/utils/format_date.dart';
-import 'package:taskflow_mobile/utils/snackbar_info.dart';
+import 'package:taskflow_mobile/utils/snackbar_global.dart';
 // Views
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/project_form.dart';
@@ -118,9 +118,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
         tags.add(newTag);
       });
       if (!mounted) return;
-      SnackbarInfo.showSuccess(context, 'Tag créé avec succès');
+      SnackbarGlobal.showSuccess('Tag créé avec succès');
     } catch (e) {
-      SnackbarInfo.showError(context, 'Erreur lors de la création du tag');
+      SnackbarGlobal.showError('Erreur lors de la création du tag');
     }
   }
 
@@ -153,9 +153,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       });
 
       if (!mounted) return;
-      SnackbarInfo.showSuccess(context, 'Tag modifié avec succès');
+      SnackbarGlobal.showSuccess('Tag modifié avec succès');
     } catch (e) {
-      SnackbarInfo.showError(context, 'Erreur lors de la modification');
+      SnackbarGlobal.showError('Erreur lors de la modification');
     }
   }
 
@@ -183,9 +183,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
         tags.removeWhere((t) => t.id == tag.id);
       });
       if (!mounted) return;
-      SnackbarInfo.showSuccess(context, 'Tag supprimé');
+      SnackbarGlobal.showSuccess('Tag supprimé');
     } catch (e) {
-      SnackbarInfo.showError(context, 'Erreur lors de la suppression');
+      SnackbarGlobal.showError('Erreur lors de la suppression');
     }
   }
 
@@ -216,13 +216,11 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
         members.add(user);
       });
       if (!mounted) return;
-      SnackbarInfo.showSuccess(
-        context,
+      SnackbarGlobal.showSuccess(
         '${user.firstname} ${user.lastname} a été au projet avec succès',
       );
     } catch (e) {
-      SnackbarInfo.showError(
-        context,
+      SnackbarGlobal.showError(
         'Erreur lors de l\'ajout de ${user.firstname} ${user.lastname} au projet',
       );
     }
@@ -255,10 +253,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
         members.removeWhere((m) => m.id == user.id);
       });
       if (!mounted) return;
-      SnackbarInfo.showSuccess(context, 'Membre retiré du projet');
+      SnackbarGlobal.showSuccess('Membre retiré du projet');
     } catch (e) {
-      SnackbarInfo.showError(
-        context,
+      SnackbarGlobal.showError(
         'Erreur lors de la suppression de l\'utilisateur du projet : $e',
       );
     }
@@ -364,10 +361,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
         MaterialPageRoute(builder: (context) => const ProjectsList()),
         (route) => false,
       );
-      SnackbarInfo.showSuccess(context, 'Projet supprimé avec succès');
+      SnackbarGlobal.showSuccess('Projet supprimé avec succès');
     } catch (e) {
-      SnackbarInfo.showError(
-        context,
+      SnackbarGlobal.showError(
         'Erreur lors de la suppression du projet',
       );
     }

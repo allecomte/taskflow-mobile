@@ -4,7 +4,7 @@ import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
-import 'package:taskflow_mobile/utils/snackbar_info.dart';
+import 'package:taskflow_mobile/utils/snackbar_global.dart';
 import 'package:taskflow_mobile/views/project_detail.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
@@ -109,8 +109,7 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
         Navigator.of(context).pushReplacement(route);
       }
     } catch (e) {
-      SnackbarInfo.showError(
-        context,
+      SnackbarGlobal.showError(
         'Erreur lors de la ${widget.project?.id != null ? 'modification' : 'création'} du projet',
       );
     } finally {
