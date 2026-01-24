@@ -385,10 +385,6 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       });
       if (!mounted) return;
       Navigator.of(context).pop(true);
-      // Navigator.of(context).pushAndRemoveUntil(
-      //   MaterialPageRoute(builder: (context) => const ProjectsList()),
-      //   (route) => false,
-      // );
       SnackbarGlobal.showSuccess(
         'Projet "${widget.projectLight.title}" supprimé avec succès',
       );

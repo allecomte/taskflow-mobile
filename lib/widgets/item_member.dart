@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 
@@ -78,29 +77,5 @@ class ItemMember extends StatelessWidget {
         ),
       ],
     );
-    // return
-    //   Column(
-    //     children: [
-    //       CircleAvatar(
-    //         radius: 28,
-    //         backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-    //         child: Text(
-    //           initials,
-    //           style: TextStyle(
-    //             color: Theme.of(context).colorScheme.primary,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       ),
-    //       const SizedBox(height: 8),
-    //       Text(
-    //         '$firstName $lastName',
-    //         textAlign: TextAlign.center,
-    //         maxLines: 2,
-    //         overflow: TextOverflow.ellipsis,
-    //         style: Theme.of(context).textTheme.bodySmall,
-    //       ),
-    //     ],
-    //   );
   }
 }

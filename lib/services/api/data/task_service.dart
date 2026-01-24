@@ -116,6 +116,24 @@ class TaskService {
     }
   }
 
+  Future<TaskDetailed> updateTaskState({
+    required String id,
+    required String state
+  }) async {
+    try {
+      final response = await _dio.patch(
+        'tasks/$id',
+        data: jsonEncode({
+          'state': state
+        }),
+      );
+      final task = TaskDetailed.fromJson(response.data);
+      return task;
+    } on DioException catch (e) {
+      throw Exception('Failed to update the task : ${e.message}');
+    }
+  }
+
   Future<void> deleteTask({required String taskId}) async {
     try {
       await _dio.delete('tasks/$taskId');

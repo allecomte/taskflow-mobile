@@ -59,4 +59,17 @@ class TaskDetailed extends Task {
       'tags': tags.map((e) => e.toJson()).toList(),
     };
   }
+
+  TaskDetailed copyWith({required String state}) {
+    return TaskDetailed(
+      id: id,
+      title: title,
+      description: description,
+      dueAt: dueAt,
+      priority: priority,
+      state: state,
+      project: project, 
+      assignee: assignee
+    );
+  }
 }

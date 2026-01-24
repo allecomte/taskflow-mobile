@@ -21,6 +21,7 @@ import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/associate_tag_to_task_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/remove_tag_from_task_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/update_state_task_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/chip_tag.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 import 'package:taskflow_mobile/widgets/skeleton/small_list_skeleton.dart';
@@ -123,6 +124,38 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
     }
   }
 
+  Future<void> _onUpdateStatePressed(String stateValue) async {
+    final newState = await showModalBottomSheet<TaskState>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => UpdateStateTaskBottomSheet(state: TaskState.values.firstWhere((priority) => priority.value == stateValue)),
+    );
+    if (newState == null) return;
+    _updateTaskState(newState);
+  }
+
+  Future<void> _updateTaskState(TaskState state) async {
+    final taskService = TaskService();
+    try {
+      await taskService.updateTaskState(id: widget.taskLight.id, state: state.value);
+      if (!mounted) return;
+      SnackbarGlobal.showSuccess(
+        'Priorité de la tâche mise à jour avec succès',
+      );
+      if(taskDetail != null){
+        setState(() {
+          taskDetail = taskDetail!.copyWith(state: state.value);
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      SnackbarGlobal.showError('Erreur lors de la mise à jour de la priorité');
+    }
+  }
+
   Future<void> _onDeleteTaskPressed() async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -177,7 +210,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
         ],
       ),
     );
-    if(confirm == true){
+    if (confirm == true) {
       _deleteTask();
     }
   }
@@ -188,7 +221,9 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
       await taskService.deleteTask(taskId: widget.taskLight.id);
       if (!mounted) return;
       Navigator.of(context).pop(true);
-      SnackbarGlobal.showSuccess('Tâche ${widget.taskLight.title} supprimée avec succès');
+      SnackbarGlobal.showSuccess(
+        'Tâche ${widget.taskLight.title} supprimée avec succès',
+      );
     } catch (e) {
       if (!mounted) return;
       SnackbarGlobal.showError('Erreur lors de la suppression de la tâche');
@@ -201,8 +236,10 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
     final task = taskDetail ?? widget.taskLight;
     final isUserManager = user!.roles.contains('ROLE_MANAGER');
     bool isUserOwner = false;
+    bool isUserAssignee = false;
     if (taskDetail != null) {
       isUserOwner = user.projectsOwned.contains(taskDetail!.project.id);
+      isUserAssignee = user.id == taskDetail!.assignee.id;
     }
 
     return Scaffold(
@@ -293,11 +330,25 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                   ),
                   SizedBox(height: 10),
                   // ------------------------------- STATE
-                  Text(
-                    'État : ${TaskState.values.firstWhere((state) => state.value == task.state).label}',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'État : ${TaskState.values.firstWhere((state) => state.value == task.state).label}',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      isUserAssignee ?
+                      IconButton(
+                        onPressed: () => _onUpdateStatePressed(task.state),
+                        icon: Icon(
+                          FontAwesomeIcons.penToSquare,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 16,
+                        ),
+                      ) : SizedBox.shrink(),
+                    ],
                   ),
                   SizedBox(height: 10),
                   // ------------------------------- ASSIGNEE
