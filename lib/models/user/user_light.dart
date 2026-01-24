@@ -45,4 +45,21 @@ class UserLight extends User{
       'projectsOwned': roles,
     };
   }
+
+  UserLight copyWith({
+    String? email,
+    String? firstname,
+    String? lastname,
+    List<String>? roles,
+    List<String>? projectsOwned,
+  }) {
+    return UserLight(
+      id: id,
+      email: email ?? this.email,
+      firstname: firstname ?? this.firstname,
+      lastname: lastname ?? this.lastname,
+      roles: roles ?? this.roles,
+      projectsOwned: projectsOwned ?? this.projectsOwned,
+    );
+  }
 }

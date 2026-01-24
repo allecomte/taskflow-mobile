@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
+import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/utils/snackbar_info.dart';
 import 'package:taskflow_mobile/views/project_detail.dart';
@@ -65,12 +66,13 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
     super.dispose();
   }
 
-  Future<void> _updateData() async {
+  Future<void> _onValidationPressed() async {
     setState(() {
       _isProcessing = true;
     });
     try {
       final projectService = ProjectService();
+      // Update existing project
       if (widget.project?.id != null) {
         final project = await projectService.updateProject(
           id: widget.project!.id,
@@ -87,13 +89,18 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
         Navigator.of(context)
           ..pop()
           ..pushReplacement(route);
-      } else {
+      } 
+      // Create new project
+      else {
         final project = await projectService.createProject(
           title: _titleController.text,
           description: _descriptionController.text,
           startAt: formatDateTimeToStringApi(_startAtSelected)!,
           endAt: formatDateTimeToStringApi(_endAtSelected),
         );
+        ref.read(userProvider.notifier).updateUser((currentUser) {
+          return currentUser.copyWith(projectsOwned: [...currentUser.projectsOwned, project.id]);
+        });
         if (!mounted) return;
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) =>
@@ -221,7 +228,7 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
                           ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                _updateData();
+                                _onValidationPressed();
                               }
                             },
                             child: _isProcessing

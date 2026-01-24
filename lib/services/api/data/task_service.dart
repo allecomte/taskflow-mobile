@@ -115,4 +115,12 @@ class TaskService {
       throw Exception('Failed to update the task : ${e.message}');
     }
   }
+
+  Future<void> deleteTask({required String taskId}) async {
+    try {
+      await _dio.delete('tasks/$taskId');
+    } on DioException catch (e) {
+      throw Exception('Failed to delete task : ${e.message}');
+    }
+  }
 }

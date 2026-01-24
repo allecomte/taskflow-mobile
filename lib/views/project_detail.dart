@@ -17,6 +17,7 @@ import 'package:taskflow_mobile/utils/snackbar_info.dart';
 // Views
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/project_form.dart';
+import 'package:taskflow_mobile/views/projects_list.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 // Widgets
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
@@ -191,7 +192,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   Future<void> _onAddUserPressed() async {
     // Users already members and creator
     List<String> userIdsToExclude = members.map((user) => user.id).toList();
-    if(owner != null) userIdsToExclude.add(owner!.id);
+    if (owner != null) userIdsToExclude.add(owner!.id);
     final UserDetailed? userToAdd = await showModalBottomSheet<UserDetailed>(
       context: context,
       isScrollControlled: true,
@@ -201,10 +202,10 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       builder: (_) => AddUserBottomSheet(userIdsToExclude: userIdsToExclude),
     );
     if (userToAdd == null) return;
-    __addMember(userToAdd);
+    _addMember(userToAdd);
   }
 
-  Future<void> __addMember(UserDetailed user) async {
+  Future<void> _addMember(UserDetailed user) async {
     try {
       final projectService = ProjectService();
       await projectService.addMemberToProject(
@@ -263,33 +264,148 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
     }
   }
 
+  Future<void> _onDeleteProjectPressed() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Icon(
+                FontAwesomeIcons.trash,
+                size: 16,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                'Confirmer la suppression',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Êtes-vous sûr de vouloir supprimer ce projet ?'),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Icon(
+                    FontAwesomeIcons.triangleExclamation,
+                    size: 14,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Un projet contenant des tâches ne peut pas être supprimé.',
+                    softWrap: true,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: Theme.of(context).colorScheme.primary),
+            ),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+            ),
+            child: Text(
+              'Supprimer',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      _deleteProject();
+    }
+  }
+
+  Future<void> _deleteProject() async {
+    try {
+      final projectService = ProjectService();
+      await projectService.deleteProject(projectId: widget.projectLight.id);
+      ref.read(userProvider.notifier).updateUser((currentUser) {
+        return currentUser.copyWith(projectsOwned: currentUser.projectsOwned.where((id) => id != widget.projectLight.id).toList());
+      });
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const ProjectsList()),
+        (route) => false,
+      );
+      SnackbarInfo.showSuccess(context, 'Projet supprimé avec succès');
+    } catch (e) {
+      SnackbarInfo.showError(
+        context,
+        'Erreur lors de la suppression du projet',
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     final project = projectDetail ?? widget.projectLight;
     final isUserManager = user!.roles.contains('ROLE_MANAGER');
     final isUserOwner = user.projectsOwned.contains(project.id);
-
     return Scaffold(
       appBar: AppBarCurrentView(
         title: project.title,
         actions: projectDetail != null && isUserManager && isUserOwner
             ? [
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProjectForm(project: projectDetail!),
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    FontAwesomeIcons.penToSquare,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.only(right: 10),
                   child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              ProjectForm(project: projectDetail!),
-                        ),
-                      );
-                    },
+                    onPressed: _onDeleteProjectPressed,
                     icon: Icon(
-                      FontAwesomeIcons.penToSquare,
-                      color: Theme.of(context).colorScheme.primary,
+                      FontAwesomeIcons.trash,
+                      color: Theme.of(context).colorScheme.error,
                       size: 20,
                     ),
                   ),
@@ -322,7 +438,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       SizedBox(width: 10),
-                      project.endAt!.isNotEmpty
+                      project.endAt != null && project.endAt!.isNotEmpty
                           ? Text(
                               "Du ${formatDateFr(project.startAt)} au ${formatDateFr(project.endAt!)}",
                               style: TextStyle(
@@ -508,8 +624,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  TaskForm(project: projectDetail),
+                              builder: (_) => TaskForm(project: projectDetail),
                             ),
                           ),
                           child: Icon(

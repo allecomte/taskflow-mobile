@@ -15,4 +15,9 @@ class UserNotifier extends StateNotifier<UserLight?> {
   void clearUser() {
     state = null;
   }
+
+  void updateUser(UserLight Function(UserLight currentUser) update) {
+    if(state == null) return;
+    state = update(state!);
+  }
 }

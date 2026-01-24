@@ -58,11 +58,11 @@ class ProjectService {
       final response = await _dio.post(
         'projects',
         data: jsonEncode({
-          'title': title,
-          'description': description,
-          'startAt': startAt,
-          'endAt': endAt,
-        }),
+        'title': title,
+        'description': description,
+        'startAt': startAt,
+        if(endAt != null) 'endAt': endAt,
+      }),
         options: Options(contentType: Headers.jsonContentType),
       );
       final data = Map<String, dynamic>.from(response.data);
@@ -119,6 +119,14 @@ class ProjectService {
       await _dio.delete('projects/$projectId/members/$userId');
     } on DioException catch (e) {
       throw Exception(e.response?.data['error'] ?? e.message);
+    }
+  }
+
+  Future<void> deleteProject({required String projectId}) async {
+    try {
+      await _dio.delete('projects/$projectId');
+    } on DioException catch (e) {
+      throw Exception('Failed to delete project : ${e.message}');
     }
   }
 }
