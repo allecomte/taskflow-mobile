@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Enums
-// import 'package:taskflow_mobile/enums/load_state.dart';
+import 'package:taskflow_mobile/enums/load_state.dart';
+import 'package:taskflow_mobile/main.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
@@ -25,9 +26,7 @@ class Home extends ConsumerStatefulWidget {
   ConsumerState<Home> createState() => HomeState();
 }
 
-enum LoadState { loading, success, error }
-
-class HomeState extends ConsumerState<Home> {
+class HomeState extends ConsumerState<Home> with RouteAware{
   LoadState projectsState = LoadState.loading;
   LoadState tasksState = LoadState.loading;
 
@@ -46,12 +45,72 @@ class HomeState extends ConsumerState<Home> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // subscribe to route changes
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    // unsubscribe from route changes
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when the current route has been popped back to
+    refreshData();
+  }
+
+  Future<void> refreshData() async {
+    setState(() {
+      projectsState = LoadState.loading;
+      tasksState = LoadState.loading;
+    });
+    await getData();
+  }
+
+  Future<void> getData() async {
+    final projectService = ProjectService();
+      try {
+        final dataProjects = await projectService.getProjects(pagination: true, limit: numberOfItemsToDisplay, page: 1, getAlsoArchived: false, sort: '-createdAt');
+        setState(() {
+          projects = dataProjects.data;
+          numberOfProjects = dataProjects.pagination.total;
+          projectsState = LoadState.success;
+        });
+      } catch (e) {
+        setState(() {
+          projectsState = LoadState.error;
+        });
+      }
+
+    final taskService = TaskService();
+    try {
+      final dataTasks = await taskService.getTasks(pagination: true, limit: numberOfItemsToDisplay, page: 1, notClosed: true, sort: '-dueAt');
+      setState(() {
+        tasks = dataTasks.data;
+        numberOfTasks = dataTasks.pagination.total;
+        tasksState = LoadState.success;
+      });
+    } catch (e) {
+      setState(() {
+        tasksState = LoadState.error;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return 
     Scaffold(
       bottomNavigationBar: BottomAppBarMenu(currentView: 'home'),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: RefreshIndicator(
+          onRefresh: refreshData,
+          child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
@@ -273,54 +332,9 @@ class HomeState extends ConsumerState<Home> {
               ],
             ),
           ),
-        ),
+        ) 
+          ),
       ),
     );
-  }
-
-  Future<void> getData() async {
-    // TO SIMULATE LOADING TIME
-    // Future.delayed(const Duration(seconds: 5), () async {
-    //   final projectService = ProjectService();
-    //   try {
-    //     final dataProjects = await projectService.getProjects();
-    //     setState(() {
-    //       projects = dataProjects;
-    //       projectsState = LoadState.success;
-    //     });
-    //   } catch (e) {
-    //     setState(() {
-    //       projectsState = LoadState.error;
-    //     });
-    //   }
-    // });
-
-    final projectService = ProjectService();
-      try {
-        final dataProjects = await projectService.getProjects(pagination: true, limit: numberOfItemsToDisplay, page: 1, getAlsoArchived: false, sort: '-createdAt');
-        setState(() {
-          projects = dataProjects.data;
-          numberOfProjects = dataProjects.pagination.total;
-          projectsState = LoadState.success;
-        });
-      } catch (e) {
-        setState(() {
-          projectsState = LoadState.error;
-        });
-      }
-
-    final taskService = TaskService();
-    try {
-      final dataTasks = await taskService.getTasks(pagination: true, limit: numberOfItemsToDisplay, page: 1, notClosed: true, sort: '-dueAt');
-      setState(() {
-        tasks = dataTasks.data;
-        numberOfTasks = dataTasks.pagination.total;
-        tasksState = LoadState.success;
-      });
-    } catch (e) {
-      setState(() {
-        tasksState = LoadState.error;
-      });
-    }
   }
 }

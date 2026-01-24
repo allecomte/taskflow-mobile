@@ -13,6 +13,8 @@ void main() {
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
+final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -27,6 +29,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: 'TaskFlow',
       scaffoldMessengerKey: rootScaffoldMessengerKey,
+      navigatorObservers: [routeObserver],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1C845C)),
       ),

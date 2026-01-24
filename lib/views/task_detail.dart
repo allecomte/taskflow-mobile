@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taskflow_mobile/enums/load_state.dart';
 // Enums
 import 'package:taskflow_mobile/enums/task_priority.dart';
 import 'package:taskflow_mobile/enums/task_state.dart';
@@ -15,7 +16,6 @@ import 'package:taskflow_mobile/services/api/data/task_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_global.dart';
 // Views
-import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
@@ -77,7 +77,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
       ),
       builder: (_) => AssociateTagToTaskBottomSheet(taskDetail: taskDetail!),
     );
-    if(tagAssociated == null) return;
+    if (tagAssociated == null) return;
     _associateOrRemoveTag(tagAssociated, true);
   }
 
@@ -97,22 +97,101 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
   }
 
   Future<void> _associateOrRemoveTag(Tag tag, bool toAssociate) async {
-    try{
+    try {
       final tagService = TagService();
-      await tagService.associateOrDissociateTagWithTask(taskId: widget.taskLight.id, tagId: tag.id);
-      if(toAssociate){
+      await tagService.associateOrDissociateTagWithTask(
+        taskId: widget.taskLight.id,
+        tagId: tag.id,
+      );
+      if (toAssociate) {
         setState(() {
           tags.add(tag);
         });
-      }else{
+      } else {
         setState(() {
           tags.remove(tag);
         });
       }
       if (!mounted) return;
-      SnackbarGlobal.showSuccess('Tag ${toAssociate ?  'associé à':'retiré de'} la tâche');
-    }catch (e) {
-      SnackbarGlobal.showError('Erreur lors ${toAssociate ?  'l\'association ':'du retrait'} du tag');
+      SnackbarGlobal.showSuccess(
+        'Tag ${toAssociate ? 'associé à' : 'retiré de'} la tâche',
+      );
+    } catch (e) {
+      SnackbarGlobal.showError(
+        'Erreur lors ${toAssociate ? 'l\'association ' : 'du retrait'} du tag',
+      );
+    }
+  }
+
+  Future<void> _onDeleteTaskPressed() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Icon(
+                FontAwesomeIcons.trash,
+                size: 16,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                'Confirmer la suppression',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Êtes-vous sûr de vouloir supprimer cette tâche ?',
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: Theme.of(context).colorScheme.primary),
+            ),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+            ),
+            child: Text(
+              'Supprimer',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if(confirm == true){
+      _deleteTask();
+    }
+  }
+
+  Future<void> _deleteTask() async {
+    final taskService = TaskService();
+    try {
+      await taskService.deleteTask(taskId: widget.taskLight.id);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+      SnackbarGlobal.showSuccess('Tâche ${widget.taskLight.title} supprimée avec succès');
+    } catch (e) {
+      if (!mounted) return;
+      SnackbarGlobal.showError('Erreur lors de la suppression de la tâche');
     }
   }
 
@@ -131,20 +210,28 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
         title: task.title,
         actions: taskDetail != null && isUserManager && isUserOwner
             ? [
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TaskForm(task: taskDetail!),
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    FontAwesomeIcons.penToSquare,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.only(right: 10),
                   child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => TaskForm(task: taskDetail!),
-                        ),
-                      );
-                    },
+                    onPressed: _onDeleteTaskPressed,
                     icon: Icon(
-                      FontAwesomeIcons.penToSquare,
-                      color: Theme.of(context).colorScheme.primary,
+                      FontAwesomeIcons.trash,
+                      color: Theme.of(context).colorScheme.error,
                       size: 20,
                     ),
                   ),
@@ -152,7 +239,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
               ]
             : [],
       ),
-      bottomNavigationBar: BottomAppBarMenu(currentView: 'project'),
+      bottomNavigationBar: BottomAppBarMenu(currentView: 'task'),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: refetchTask,
@@ -240,12 +327,16 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  taskState == LoadState.loading ? SmallListSkeleton() : taskState == LoadState.error ? Text(
+                  taskState == LoadState.loading
+                      ? SmallListSkeleton()
+                      : taskState == LoadState.error
+                      ? Text(
                           'Erreur lors du chargement des tags',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.error,
                           ),
-                        ): tags.isEmpty
+                        )
+                      : tags.isEmpty
                       ? Text(
                           "Le projet ne possède aucun tag.",
                           style: TextStyle(
@@ -287,7 +378,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

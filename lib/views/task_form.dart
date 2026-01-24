@@ -140,6 +140,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
     });
     try {
       final taskService = TaskService();
+      // Update existing task
       if (widget.task?.id != null) {
         final task = await taskService.updateTask(
           id: widget.task!.id,
@@ -156,8 +157,13 @@ class TaskFormState extends ConsumerState<TaskForm> {
             ),
           );
           Navigator.of(context).pushReplacement(route);
-      } else {
-        await taskService.createTask(
+          SnackbarGlobal.showSuccess(
+          'Tâche "${task.title}" modifié avec succès',
+        );
+      } 
+      // Create new task
+      else {
+        final task = await taskService.createTask(
           title: _titleController.text,
           description: _descriptionController.text,
           dueAt: formatDateTimeToStringApi(_dueAtSelected)!,
@@ -186,6 +192,9 @@ class TaskFormState extends ConsumerState<TaskForm> {
           );
           Navigator.of(context).pushReplacement(route);
         }
+        SnackbarGlobal.showSuccess(
+          'Projet "${task.title}" créé avec succès',
+        );
       }
     } catch (e) {
       if (!mounted) return;

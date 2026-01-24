@@ -89,7 +89,10 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
         Navigator.of(context)
           ..pop()
           ..pushReplacement(route);
-      } 
+          SnackbarGlobal.showSuccess(
+          'Projet "${project.title}" modifié avec succès',
+        );
+      }
       // Create new project
       else {
         final project = await projectService.createProject(
@@ -99,14 +102,18 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
           endAt: formatDateTimeToStringApi(_endAtSelected),
         );
         ref.read(userProvider.notifier).updateUser((currentUser) {
-          return currentUser.copyWith(projectsOwned: [...currentUser.projectsOwned, project.id]);
+          return currentUser.copyWith(
+            projectsOwned: [...currentUser.projectsOwned, project.id],
+          );
         });
         if (!mounted) return;
         MaterialPageRoute route = MaterialPageRoute(
-          builder: (context) =>
-              ProjectDetail(projectLight: project),
+          builder: (context) => ProjectDetail(projectLight: project),
         );
         Navigator.of(context).pushReplacement(route);
+        SnackbarGlobal.showSuccess(
+          'Projet "${project.title}" créé avec succès',
+        );
       }
     } catch (e) {
       SnackbarGlobal.showError(

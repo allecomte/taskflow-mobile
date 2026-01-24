@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Enums
 import 'package:taskflow_mobile/enums/load_state.dart';
+import 'package:taskflow_mobile/main.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
@@ -20,7 +21,7 @@ class ProjectsList extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => ProjectsListState();
 }
 
-class ProjectsListState extends ConsumerState<ProjectsList> {
+class ProjectsListState extends ConsumerState<ProjectsList> with RouteAware {
   LoadState projectsState = LoadState.loading;
   List<ProjectLight> projects = [];
 
@@ -28,6 +29,26 @@ class ProjectsListState extends ConsumerState<ProjectsList> {
   void initState() {
     super.initState();
     fetchProjects();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // subscribe to route changes
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    // unsubscribe from route changes
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when the current route has been popped back to
+    refreshProjects();
   }
 
   Future<void> fetchProjects() async {

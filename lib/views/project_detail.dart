@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taskflow_mobile/enums/load_state.dart';
+import 'package:taskflow_mobile/main.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
@@ -15,9 +17,7 @@ import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
 import 'package:taskflow_mobile/utils/snackbar_global.dart';
 // Views
-import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/project_form.dart';
-import 'package:taskflow_mobile/views/projects_list.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 // Widgets
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
@@ -44,7 +44,7 @@ class ProjectDetail extends ConsumerStatefulWidget {
   ConsumerState<ProjectDetail> createState() => ProjectDetailState();
 }
 
-class ProjectDetailState extends ConsumerState<ProjectDetail> {
+class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   LoadState projectState = LoadState.loading;
   ProjectDetailed? projectDetail;
   List<TaskLight> tasks = [];
@@ -57,6 +57,26 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
   void initState() {
     super.initState();
     fetchProject();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // subscribe to route changes
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    // unsubscribe from route changes
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when the current route has been popped back to
+    refreshProject();
   }
 
   Future<void> refreshProject() async {
@@ -291,7 +311,10 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Êtes-vous sûr de vouloir supprimer ce projet ?'),
+            Text(
+              'Êtes-vous sûr de vouloir supprimer ce projet ?',
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
             const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -354,18 +377,23 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> {
       final projectService = ProjectService();
       await projectService.deleteProject(projectId: widget.projectLight.id);
       ref.read(userProvider.notifier).updateUser((currentUser) {
-        return currentUser.copyWith(projectsOwned: currentUser.projectsOwned.where((id) => id != widget.projectLight.id).toList());
+        return currentUser.copyWith(
+          projectsOwned: currentUser.projectsOwned
+              .where((id) => id != widget.projectLight.id)
+              .toList(),
+        );
       });
       if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const ProjectsList()),
-        (route) => false,
+      Navigator.of(context).pop(true);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //   MaterialPageRoute(builder: (context) => const ProjectsList()),
+      //   (route) => false,
+      // );
+      SnackbarGlobal.showSuccess(
+        'Projet "${widget.projectLight.title}" supprimé avec succès',
       );
-      SnackbarGlobal.showSuccess('Projet supprimé avec succès');
     } catch (e) {
-      SnackbarGlobal.showError(
-        'Erreur lors de la suppression du projet',
-      );
+      SnackbarGlobal.showError('Erreur lors de la suppression du projet');
     }
   }
 

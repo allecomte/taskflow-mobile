@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/enums/load_state.dart';
+import 'package:taskflow_mobile/main.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
@@ -18,7 +19,7 @@ class TasksList extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => TasksListState();
 }
 
-class TasksListState extends ConsumerState<TasksList> {
+class TasksListState extends ConsumerState<TasksList> with RouteAware {
   LoadState tasksState = LoadState.loading;
   List<TaskLight> tasks = [];
 
@@ -26,6 +27,26 @@ class TasksListState extends ConsumerState<TasksList> {
   void initState() {
     super.initState();
     fetchTasks();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // subscribe to route changes
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    // unsubscribe from route changes
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when the current route has been popped back to
+    refreshTasks();
   }
 
   Future<void> fetchTasks() async {
