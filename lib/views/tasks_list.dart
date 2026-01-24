@@ -3,12 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/enums/load_state.dart';
 import 'package:taskflow_mobile/main.dart';
+import 'package:taskflow_mobile/models/task/list/task_filters.dart';
+import 'package:taskflow_mobile/models/task/list/task_sort.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
+import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/filter_task_bottom_sheet.dart';
+import 'package:taskflow_mobile/widgets/bottom_sheet/sort_task_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
@@ -71,6 +76,28 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
     await fetchTasks();
   }
 
+  Future<void> _onFiltersPressed() async {
+    final filters = await showModalBottomSheet<TaskFilters>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => const FilterTaskBottomSheet(),
+    );
+    if(filters != null){
+      ref.read(TasksListProvider.notifier).setFilters(filters);
+    }
+  }
+
+  Future<void> _onSortPressed() async {
+    final sort = await showModalBottomSheet<TaskSort>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => const SortTaskBottomSheet(),
+    );
+    if(sort != null){
+      ref.read(TasksListProvider.notifier).setSort(sort);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -109,7 +136,31 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
             physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.all(16),
-              child: tasksState == LoadState.loading
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: _onFiltersPressed,
+                        icon: Icon(
+                          FontAwesomeIcons.filter,
+                          size: 16,
+                        ),
+                        label: Text('Filtrer'),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: _onSortPressed,
+                        icon: Icon(
+                          FontAwesomeIcons.sort,
+                          size: 16,
+                        ),
+                        label: Text('Trier'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  tasksState == LoadState.loading
                   ? ListSkeleton(itemCount: 10)
                   : tasksState == LoadState.error
                   ? Text(
@@ -132,7 +183,9 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
                       itemBuilder: ((context, index) =>
                           CardTask(task: tasks[index])),
                       itemCount: tasks.length,
-                    ),
+                    )
+                ],
+              ),
             ),
           ),
         ),

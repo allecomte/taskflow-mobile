@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:taskflow_mobile/enums/task_state.dart';
 
-class UpdateStateTaskBottomSheet extends StatefulWidget {
-  final TaskState state;
-  const UpdateStateTaskBottomSheet({super.key, required this.state});
+class SortTaskBottomSheet extends ConsumerStatefulWidget {
+  const SortTaskBottomSheet({super.key});
 
   @override
-  State<StatefulWidget> createState() => UpdateStateTaskBottomSheetState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      SortTaskBottomSheetState();
 }
 
-class UpdateStateTaskBottomSheetState
-    extends State<UpdateStateTaskBottomSheet> {
-  late TaskState _stateSelected = widget.state;
-
-  @override
-  initState() {
-    super.initState();
-  }
-
+class SortTaskBottomSheetState extends ConsumerState<SortTaskBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -42,13 +34,13 @@ class UpdateStateTaskBottomSheetState
                   Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Icon(
-                      FontAwesomeIcons.pen,
+                      FontAwesomeIcons.sort,
                       size: 16,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   Text(
-                    'Modifier l\'état de la tâche',
+                    'Trier la liste de tâches',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -58,21 +50,7 @@ class UpdateStateTaskBottomSheetState
                 ],
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<TaskState>(
-                initialValue: _stateSelected,
-                decoration: InputDecoration(labelText: 'Priorité'),
-                items: TaskState.values.map((TaskState state) {
-                  return DropdownMenuItem<TaskState>(
-                    value: state,
-                    child: Text(state.label),
-                  );
-                }).toList(),
-                onChanged: (TaskState? newValue) {
-                  setState(() {
-                    _stateSelected = newValue!;
-                  });
-                },
-              ),
+              // TODO
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -85,13 +63,8 @@ class UpdateStateTaskBottomSheetState
                           context,
                         ).colorScheme.secondary,
                       ),
-                      onPressed: () => Navigator.pop(context, _stateSelected),
-                      child: Text(
-                        'Enregistrer',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                      ),
+                      onPressed: () {},
+                      child: Text('Appliquer',style: TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
                     ),
                   ),
                 ],
