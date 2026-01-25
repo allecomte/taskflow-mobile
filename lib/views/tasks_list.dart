@@ -102,6 +102,7 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     final isUserManager = user!.roles.contains('ROLE_MANAGER');
+    final filters = ref.watch(TasksListProvider).filters;
     return Scaffold(
       appBar: AppBarCurrentView(
         title: 'Mes tâches',

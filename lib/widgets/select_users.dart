@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/models/user/user_detailed.dart';
 import 'package:taskflow_mobile/providers/users_provider.dart';
+import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 
 class SelectUsers extends ConsumerStatefulWidget {
   final List<String> userIdsToExclude;
+  final String? initialValue;
   final void Function(UserDetailed user) onSelected;
   const SelectUsers({
     super.key,
     required this.userIdsToExclude,
-    required this.onSelected,
+    this.initialValue,
+    required this.onSelected, 
   });
 
   @override
@@ -34,6 +37,12 @@ class SelectUsersState extends ConsumerState<SelectUsers> {
 
         return DropdownButtonFormField<UserDetailed>(
           decoration: const InputDecoration(labelText: 'Utilisateur'),
+          initialValue: userSelected ??
+              (widget.initialValue != null
+                  ? usersFiltered.firstWhere(
+                      (user) => user.id == widget.initialValue,
+                    )
+                  : null),
           items: usersFiltered.map((user) {
             return DropdownMenuItem<UserDetailed>(
               value: user,
@@ -56,8 +65,10 @@ class SelectUsersState extends ConsumerState<SelectUsers> {
           },
         );
       },
-      error: (_, _) => const Text('Erreur lors du chargement des utilisateurs'),
-      loading: () => const CircularProgressIndicator(),
+      error: (_, _) => Text('Erreur lors du chargement des utilisateurs',style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          )),
+      loading: () => LineSkeleton(context: context),
     );
   }
 }

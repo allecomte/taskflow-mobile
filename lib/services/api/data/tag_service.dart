@@ -49,6 +49,15 @@ class TagService {
     }on DioException catch (e) {
       throw Exception('Failed to load tasks: ${e.message}');
     }
-    
+  }
+
+  Future<List<Tag>> getTags() async {
+    try{
+      final response = await _dio.get('tags');
+      final List<dynamic> data = response.data;
+      return data.map((json) => Tag.fromJson(json)).toList();
+    }on DioException catch (e) {
+      throw Exception('Failed to load tasks: ${e.message}');
+    }
   }
 }
