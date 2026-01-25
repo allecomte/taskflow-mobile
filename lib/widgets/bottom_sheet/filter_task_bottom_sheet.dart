@@ -29,8 +29,10 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
   String? _priority;
   DateTime? _dueAfter;
   DateTime? _dueBefore;
-  String? assigneeId;
+  String? _assigneeId;
+  String? _assigneeLabel;
   String? _tagId;
+  String? _tagLabel;
   bool _onlyNotClosed = true;
   bool _onlyMine = false;
 
@@ -42,8 +44,10 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
     _priority = filters.priority;
     _dueBefore = filters.dueBefore;
     _dueAfter = filters.dueAfter;
-    assigneeId = filters.assigneeId;
+    _assigneeId = filters.assigneeId;
+    _assigneeLabel = filters.assigneeLabel;
     _tagId = filters.tagId;
+    _tagLabel = filters.tagLabel;
     _onlyNotClosed = filters.onlyNotClosed;
     _onlyMine = filters.onlyMine;
   }
@@ -143,6 +147,7 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                 onSelected: (tag) {
                   setState(() {
                     _tagId = tag.id;
+                    _tagLabel = tag.name;
                   });
                 },
               ),
@@ -151,7 +156,8 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                 userIdsToExclude: [],
                 onSelected: (user) => {
                   setState(() {
-                    assigneeId = user.id;
+                    _assigneeId = user.id;
+                    _assigneeLabel = '${user.firstname} ${user.lastname}';
                   }),
                 },
               ),
@@ -216,8 +222,10 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                             priority: _priority,
                             dueAfter: _dueAfter,
                             dueBefore: _dueBefore,
-                            assigneeId: assigneeId,
+                            assigneeId: _assigneeId,
+                            assigneeLabel: _assigneeLabel,
                             tagId: _tagId,
+                            tagLabel: _tagLabel,
                             onlyNotClosed: _onlyNotClosed,
                             onlyMine: _onlyMine,
                           ),

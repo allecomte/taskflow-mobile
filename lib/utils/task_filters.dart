@@ -19,10 +19,10 @@ List<ActiveFilter> getActiveFilters(TaskFilters filters) {
     active.add(ActiveFilter(key: 'priority', label: 'Priorité : ${TaskPriority.values.firstWhere((e) => e.value == filters.priority).label}'));
   }
   if (filters.tagId != null && filters.tagId!.isNotEmpty) {
-    active.add(ActiveFilter(key: 'tag', label: 'Tag : ${filters.tagId}'));
+    active.add(ActiveFilter(key: 'tag', label: 'Tag : ${filters.tagLabel}'));
   }
   if (filters.assigneeId != null && filters.assigneeId!.isNotEmpty) {
-    active.add(ActiveFilter(key: 'assignee', label: 'Assignée à : ${filters.assigneeId}'));
+    active.add(ActiveFilter(key: 'assignee', label: 'Assignée à : ${filters.assigneeLabel}'));
   }
   if (filters.dueBefore != null) {
     active.add(ActiveFilter(key: 'dueBefore', label: 'Avant : ${formatDateTimeToString(filters.dueBefore!)}'));

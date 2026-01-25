@@ -4,7 +4,9 @@ class TaskFilters {
   final DateTime? dueAfter;
   final DateTime? dueBefore;
   final String? assigneeId;
+  final String? assigneeLabel;
   final String? tagId;
+  final String? tagLabel;
   final bool onlyNotClosed;
   final bool onlyMine;
 
@@ -14,9 +16,11 @@ class TaskFilters {
     this.dueAfter,
     this.dueBefore,
     this.assigneeId,
+    this.assigneeLabel, 
     this.tagId,
+    this.tagLabel,
     this.onlyNotClosed = true,
-    this.onlyMine = false,
+    this.onlyMine = false, 
   });
 
   bool get hasFilters {
@@ -36,7 +40,9 @@ class TaskFilters {
     bool dueAfterSet = false, DateTime? dueAfter,
     bool dueBeforeSet = false, DateTime? dueBefore,
     bool assigneeIdSet = false, String? assigneeId,
+    String? assigneeLabel,
     bool tagIdSet = false, String? tagId,
+    String? tagLabel,
     bool onlyNotClosedSet = false, bool? onlyNotClosed,
     bool onlyMineSet = false, bool? onlyMine,
   }) {
@@ -46,7 +52,9 @@ class TaskFilters {
       dueAfter: dueAfterSet ? dueAfter : this.dueAfter,
       dueBefore: dueBeforeSet ? dueBefore : this.dueBefore,
       assigneeId: assigneeIdSet ? assigneeId : this.assigneeId,
+      assigneeLabel: assigneeIdSet ? assigneeLabel : this.assigneeLabel,
       tagId: tagIdSet ? tagId : this.tagId,
+      tagLabel: tagIdSet ? tagLabel : this.tagLabel,
       onlyNotClosed: onlyNotClosedSet ? onlyNotClosed! : this.onlyNotClosed,
       onlyMine: onlyMineSet ? onlyMine! : this.onlyMine,
     );

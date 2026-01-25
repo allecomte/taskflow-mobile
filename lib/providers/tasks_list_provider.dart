@@ -19,9 +19,6 @@ class TasksListNotifier extends StateNotifier<TasksListState> {
 
   Future<void> fetchTasks() async {
     state = state.copyWith(state: LoadState.loading);
-    print(
-      'Fetching tasks with filters: ${state.filters.state}, ${state.filters.priority}, ${state.filters.tagId}, ${state.filters.assigneeId}, ${state.filters.dueBefore}, ${state.filters.dueAfter}, onlyNotClosed: ${state.filters.onlyNotClosed}',
-    );
     try {
       final response = await _taskService.getTasks(
         pagination: false,
