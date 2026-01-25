@@ -21,7 +21,7 @@ class UserService {
       List<dynamic> data = response.data;
       return data.map((json) => UserDetailed.fromJson(json)).toList();
     } on DioException catch (e) {
-      throw Exception('Failed to load user profile: ${e.message}');
+      throw Exception('Failed to load users: ${e.message}');
     }
   }
 }

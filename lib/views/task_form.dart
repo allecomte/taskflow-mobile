@@ -9,6 +9,7 @@ import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
+import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
 import 'package:taskflow_mobile/providers/users_provider.dart';
 // Services
 import 'package:taskflow_mobile/services/api/data/project_service.dart';
@@ -192,6 +193,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
           );
           Navigator.of(context).pushReplacement(route);
         }
+        ref.read(tasksListProvider.notifier).refresh();
         SnackbarGlobal.showSuccess(
           'Projet "${task.title}" créé avec succès',
         );

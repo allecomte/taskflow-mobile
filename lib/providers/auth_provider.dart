@@ -19,6 +19,7 @@ class AuthNotifier extends AsyncNotifier<String?> {
     _ref = ref;
     final token = await SecureStorage.getToken();
     if (token != null) {
+      print('TOKEN FOUND IN STORAGE: $token');
       final userService = UserService();
       final user = await userService.getUserProfile();
       _ref.read(userProvider.notifier).setUser(user);

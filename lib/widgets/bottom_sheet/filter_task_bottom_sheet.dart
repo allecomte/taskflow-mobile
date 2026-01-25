@@ -8,6 +8,8 @@ import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/list/task_filters.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
+import 'package:taskflow_mobile/widgets/checkbox_boolean_item.dart';
+import 'package:taskflow_mobile/widgets/date_picker_field.dart';
 import 'package:taskflow_mobile/widgets/select_from_enum.dart';
 import 'package:taskflow_mobile/widgets/select_tags.dart';
 import 'package:taskflow_mobile/widgets/select_users.dart';
@@ -35,11 +37,11 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
   @override
   void initState() {
     super.initState();
-    final filters = ref.read(TasksListProvider).filters;
+    final filters = ref.read(tasksListProvider).filters;
     _state = filters.state;
     _priority = filters.priority;
-    _dueAfter = filters.dueAfter;
     _dueBefore = filters.dueBefore;
+    _dueAfter = filters.dueAfter;
     assigneeId = filters.assigneeId;
     _tagId = filters.tagId;
     _onlyNotClosed = filters.onlyNotClosed;
@@ -87,25 +89,55 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
               const SizedBox(height: 16),
               SelectFromEnum<TaskState>(
                 fieldLabel: 'État',
-                initialValue: _state != null ? TaskState.values.where((state) => state.value == _state).cast<TaskState?>().firstOrNull : null,
-                items: TaskState.values, 
+                initialValue: _state != null
+                    ? TaskState.values
+                          .where((state) => state.value == _state)
+                          .cast<TaskState?>()
+                          .firstOrNull
+                    : null,
+                items: TaskState.values,
                 onSelect: (priority) {
                   setState(() {
                     _state = priority.value;
                   });
                 },
-                ),
+              ),
               const SizedBox(height: 16),
               SelectFromEnum<TaskPriority>(
                 fieldLabel: 'Priorité',
-                initialValue: _priority != null ? TaskPriority.values.where((p) => p.value == _priority).cast<TaskPriority?>().firstOrNull : null,
-                items: TaskPriority.values, 
+                initialValue: _priority != null
+                    ? TaskPriority.values
+                          .where((p) => p.value == _priority)
+                          .cast<TaskPriority?>()
+                          .firstOrNull
+                    : null,
+                items: TaskPriority.values,
                 onSelect: (priority) {
                   setState(() {
                     _priority = priority.value;
                   });
                 },
-                ),
+              ),
+              const SizedBox(height: 16),
+              DatePickerField(
+                label: 'Échéance avant le',
+                initialDate: _dueBefore,
+                onDateSelected: (date) {
+                  setState(() {
+                    _dueBefore = date;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              DatePickerField(
+                label: 'Échéance après le',
+                initialDate: _dueAfter,
+                onDateSelected: (date) {
+                  setState(() {
+                    _dueAfter = date;
+                  });
+                },
+              ),
               const SizedBox(height: 16),
               SelectTags(
                 onSelected: (tag) {
@@ -121,6 +153,24 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                   setState(() {
                     assigneeId = user.id;
                   }),
+                },
+              ),
+              const SizedBox(height: 20),
+              CheckboxBooleanItem(
+                label: 'Afficher uniquement les tâches non clôturées',
+                onChanged: (value) {
+                  setState(() {
+                    _onlyNotClosed = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              CheckboxBooleanItem(
+                label: 'Afficher uniquement mes tâches',
+                onChanged: (value) {
+                  setState(() {
+                    _onlyMine = value;
+                  });
                 },
               ),
               const SizedBox(height: 24),

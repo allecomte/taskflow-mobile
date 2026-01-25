@@ -19,7 +19,8 @@ class TaskService {
     String? priority,
     String? tag,
     String? assignee,
-    String? dueAt,
+    String? dueBefore,
+    String? dueAfter,
   }) async {
     try {
       final response = await _dio.get(
@@ -34,7 +35,8 @@ class TaskService {
           if (priority != null) 'priority': priority,
           if (tag != null) 'tag': tag,
           if (assignee != null) 'assignee': assignee,
-          if (dueAt != null) 'dueAt': dueAt,
+          if (dueBefore != null) 'dueAt[lte]': dueBefore,
+          if (dueAfter != null) 'dueAt[gte]': dueAfter,
         },
       );
       final result = ApiResponsePagination<TaskLight>.fromJson(

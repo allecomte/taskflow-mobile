@@ -10,6 +10,7 @@ import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
+import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
@@ -221,6 +222,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
       await taskService.deleteTask(taskId: widget.taskLight.id);
       if (!mounted) return;
       Navigator.of(context).pop(true);
+      ref.read(tasksListProvider.notifier).refresh();
       SnackbarGlobal.showSuccess(
         'Tâche ${widget.taskLight.title} supprimée avec succès',
       );

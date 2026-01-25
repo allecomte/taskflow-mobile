@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/enums/load_state.dart';
-import 'package:taskflow_mobile/main.dart';
 import 'package:taskflow_mobile/models/task/list/task_filters.dart';
 import 'package:taskflow_mobile/models/task/list/task_sort.dart';
-import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
-import 'package:taskflow_mobile/services/api/data/task_service.dart';
+import 'package:taskflow_mobile/utils/task_filters.dart';
 import 'package:taskflow_mobile/views/task_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
@@ -17,92 +15,39 @@ import 'package:taskflow_mobile/widgets/bottom_sheet/sort_task_bottom_sheet.dart
 import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
-class TasksList extends ConsumerStatefulWidget {
+class TasksList extends ConsumerWidget {
   const TasksList({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => TasksListState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tasksList = ref.watch(tasksListProvider);
+    final user = ref.watch(userProvider);
+    final isUserManager = user!.roles.contains('ROLE_MANAGER');
+    final filters = ref.watch(tasksListProvider).filters;
+    final activeFilters = getActiveFilters(filters);
 
-class TasksListState extends ConsumerState<TasksList> with RouteAware {
-  LoadState tasksState = LoadState.loading;
-  List<TaskLight> tasks = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchTasks();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // subscribe to route changes
-    routeObserver.subscribe(this, ModalRoute.of(context)!);
-  }
-
-  @override
-  void dispose() {
-    // unsubscribe from route changes
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  @override
-  void didPopNext() {
-    // Called when the current route has been popped back to
-    refreshTasks();
-  }
-
-  Future<void> fetchTasks() async {
-    final taskService = TaskService();
-    try {
-      final dataTasks = await taskService.getTasks();
-      setState(() {
-        tasks = dataTasks.data;
-        tasksState = LoadState.success;
-      });
-    } catch (e) {
-      setState(() {
-        tasksState = LoadState.error;
-      });
-    }
-  }
-
-  Future<void> refreshTasks() async {
-    setState(() {
-      tasksState = LoadState.loading;
-    });
-    await fetchTasks();
-  }
-
-  Future<void> _onFiltersPressed() async {
+    Future<void> onFiltersPressed() async {
     final filters = await showModalBottomSheet<TaskFilters>(
       context: context,
       isScrollControlled: true,
       builder: (context) => const FilterTaskBottomSheet(),
     );
     if(filters != null){
-      ref.read(TasksListProvider.notifier).setFilters(filters);
+      ref.read(tasksListProvider.notifier).setFilters(filters);
     }
   }
 
-  Future<void> _onSortPressed() async {
+  Future<void> onSortPressed() async {
     final sort = await showModalBottomSheet<TaskSort>(
       context: context,
       isScrollControlled: true,
       builder: (context) => const SortTaskBottomSheet(),
     );
     if(sort != null){
-      ref.read(TasksListProvider.notifier).setSort(sort);
+      ref.read(tasksListProvider.notifier).setSort(sort);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-    final isUserManager = user!.roles.contains('ROLE_MANAGER');
-    final filters = ref.watch(TasksListProvider).filters;
     return Scaffold(
       appBar: AppBarCurrentView(
         title: 'Mes tâches',
@@ -132,18 +77,21 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
       bottomNavigationBar: BottomAppBarMenu(currentView: 'task'),
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: refreshTasks,
+          onRefresh: () async {
+            await ref.read(tasksListProvider.notifier).refresh();
+          },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
                 children: [
+                  // FILTER & SORT BUTTONS
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: _onFiltersPressed,
+                        onPressed: onFiltersPressed,
                         icon: Icon(
                           FontAwesomeIcons.filter,
                           size: 16,
@@ -151,7 +99,7 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
                         label: Text('Filtrer'),
                       ),
                       ElevatedButton.icon(
-                        onPressed: _onSortPressed,
+                        onPressed: onSortPressed,
                         icon: Icon(
                           FontAwesomeIcons.sort,
                           size: 16,
@@ -161,16 +109,58 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  tasksState == LoadState.loading
+                  // CLEAR FILTERS BUTTON
+                  if (filters.state != null ||
+                      filters.priority != null ||
+                      filters.assigneeId != null ||
+                      filters.tagId != null ||
+                      filters.dueAfter != null ||
+                      filters.dueBefore != null ||
+                      filters.onlyNotClosed ||
+                      filters.onlyMine)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          ref
+                              .read(tasksListProvider.notifier)
+                              .clearAllFilters();
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.xmark,
+                          size: 16,
+                        ),
+                        label: Text('Effacer les filtres'),
+                      ),
+                    ),
+                    // FILTERS SELECTED
+                    if(filters.hasFilters)
+                    SizedBox(height: 40, child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: activeFilters.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      itemBuilder: (context,index){
+                        final filter = activeFilters[index];
+                        return FilterChip(
+                          label: Text(filter.label), 
+                          onSelected: (_){},
+                          onDeleted: (){
+                            ref.read(tasksListProvider.notifier).removeOneFilter(filter.key);
+                          },
+                          );
+                      }, 
+                      ),),
+                  const SizedBox(height: 16),
+                  tasksList.state == LoadState.loading
                   ? ListSkeleton(itemCount: 10)
-                  : tasksState == LoadState.error
+                  : tasksList.state == LoadState.error
                   ? Text(
                       'Erreur lors du chargement des tâches',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.error,
                       ),
                     )
-                  : tasks.isEmpty
+                  : tasksList.tasks.isEmpty
                   ? Text(
                       "Vous n'avez à aucune tâche",
                       style: TextStyle(
@@ -182,8 +172,8 @@ class TasksListState extends ConsumerState<TasksList> with RouteAware {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: ((context, index) =>
-                          CardTask(task: tasks[index])),
-                      itemCount: tasks.length,
+                          CardTask(task: tasksList.tasks[index])),
+                      itemCount: tasksList.tasks.length,
                     )
                 ],
               ),

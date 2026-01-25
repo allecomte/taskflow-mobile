@@ -1,17 +1,20 @@
 enum TaskSortField { dueDate, createdAt, priority }
 
 class TaskSort {
-  final TaskSortField field;
+  final TaskSortField? field;
   final bool ascending;
 
   const TaskSort({
-    required this.field,
+    this.field,
     this.ascending = true,
   });
 
   String get apiValue {
+    if(field == null) {
+      return '';
+    }
     final prefix = ascending ? '' : '-';
-    switch (field) {
+    switch (field!) {
       case TaskSortField.dueDate:
         return '${prefix}dueAt';
       case TaskSortField.createdAt:
