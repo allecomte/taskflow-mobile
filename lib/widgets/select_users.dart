@@ -46,15 +46,7 @@ class SelectUsersState extends ConsumerState<SelectUsers> {
           items: usersFiltered.map((user) {
             return DropdownMenuItem<UserDetailed>(
               value: user,
-              child: Row(
-                children: [
-                  Text(user.firstname),
-                  Padding(
-                    padding: EdgeInsets.only(left: 16),
-                    child: Text(user.lastname),
-                  ),
-                ],
-              ),
+              child: Text('${user.firstname} ${user.lastname}'),
             );
           }).toList(),
           onChanged: (user) {

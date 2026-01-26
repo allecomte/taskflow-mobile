@@ -6,6 +6,7 @@ class CheckboxBooleanItem extends StatefulWidget {
   final void Function(bool value) onChanged;
   final double textSize;
   final double spacing;
+  final bool enabled;
 
   const CheckboxBooleanItem({
     super.key,
@@ -14,6 +15,7 @@ class CheckboxBooleanItem extends StatefulWidget {
     required this.onChanged,
     this.textSize = 16,
     this.spacing = 4,
+    this.enabled = true,
   });
 
   @override
@@ -35,21 +37,21 @@ class CheckboxBooleanItemState extends State<CheckboxBooleanItem> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Checkbox(
-            value: _value,
-            onChanged: (newValue) {
+            value: widget.enabled ? _value : false,
+            onChanged: widget.enabled ? (newValue) {
               if (newValue == null) return;
               setState(() {
                 _value = newValue;
               });
               widget.onChanged(newValue);
-            },
+            } : null,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
           SizedBox(width: widget.spacing),
           Flexible(
             child: Text(
               widget.label,
-              style: TextStyle(fontSize: widget.textSize),
+              style: TextStyle(fontSize: widget.textSize, color: widget.enabled ? null : Theme.of(context).disabledColor),
             ),
           ),
         ],

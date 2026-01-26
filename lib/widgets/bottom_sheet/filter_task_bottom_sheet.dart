@@ -6,8 +6,8 @@ import 'package:taskflow_mobile/enums/task_priority.dart';
 import 'package:taskflow_mobile/enums/task_state.dart';
 import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/list/task_filters.dart';
-import 'package:taskflow_mobile/models/user/user.dart';
 import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
+import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/widgets/checkbox_boolean_item.dart';
 import 'package:taskflow_mobile/widgets/date_picker_field.dart';
 import 'package:taskflow_mobile/widgets/select_from_enum.dart';
@@ -54,6 +54,8 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    final isUserManager = user!.roles.contains('ROLE_MANAGER');
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -103,6 +105,7 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                 onSelect: (priority) {
                   setState(() {
                     _state = priority.value;
+                    _onlyNotClosed = false;
                   });
                 },
               ),
@@ -144,6 +147,7 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
               ),
               const SizedBox(height: 16),
               SelectTags(
+                initialValue: _tagId,
                 onSelected: (tag) {
                   setState(() {
                     _tagId = tag.id;
@@ -151,18 +155,23 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                   });
                 },
               ),
-              const SizedBox(height: 16),
-              SelectUsers(
-                userIdsToExclude: [],
-                onSelected: (user) => {
-                  setState(() {
-                    _assigneeId = user.id;
-                    _assigneeLabel = '${user.firstname} ${user.lastname}';
-                  }),
-                },
-              ),
+              if (isUserManager) ...[
+                const SizedBox(height: 16),
+                SelectUsers(
+                  userIdsToExclude: [],
+                  initialValue: _assigneeId,
+                  onSelected: (user) => {
+                    setState(() {
+                      _assigneeId = user.id;
+                      _assigneeLabel = '${user.firstname} ${user.lastname}';
+                    }),
+                  },
+                ),
+              ],
               const SizedBox(height: 20),
               CheckboxBooleanItem(
+                initialValue: _onlyNotClosed,
+                enabled: _state == null,
                 label: 'Afficher uniquement les tâches non clôturées',
                 onChanged: (value) {
                   setState(() {
@@ -172,6 +181,7 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
               ),
               const SizedBox(height: 16),
               CheckboxBooleanItem(
+                initialValue: _onlyMine,
                 label: 'Afficher uniquement mes tâches',
                 onChanged: (value) {
                   setState(() {
@@ -183,29 +193,6 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  //     Expanded(
-                  //   child: OutlinedButton(
-                  //     onPressed: () => Navigator.pop(context, false),
-                  //     style: OutlinedButton.styleFrom(
-                  //       side: BorderSide(
-                  //         color: Theme.of(context).colorScheme.primary
-                  //       )
-                  //     ),
-                  //     child: const Text('Annuler'),
-                  //   ),
-                  // ),
-                  // const SizedBox(width: 12),
-                  // Expanded(
-                  //   child: ElevatedButton(
-                  //         style: ElevatedButton.styleFrom(
-                  //           backgroundColor: Theme.of(
-                  //             context,
-                  //           ).colorScheme.secondary,
-                  //         ),
-                  //         onPressed: () {},
-                  //         child: Text('Appliquer',style: TextStyle(color: Theme.of(context).colorScheme.onSecondary)),
-                  //       ),
-                  // )
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: ElevatedButton(

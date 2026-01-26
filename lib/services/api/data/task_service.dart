@@ -29,7 +29,7 @@ class TaskService {
           'pagination': pagination,
           if (pagination && page != null) 'page': page,
           if (pagination && limit != null) 'limit': limit,
-          if (notClosed != null && notClosed) 'notClosed': notClosed,
+          if (notClosed != null) 'notClosed': notClosed,
           if (sort != null) 'sort': sort,
           if (state != null) 'state': state,
           if (priority != null) 'priority': priority,

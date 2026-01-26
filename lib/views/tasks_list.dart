@@ -33,7 +33,6 @@ class TasksList extends ConsumerWidget {
       builder: (context) => const FilterTaskBottomSheet(),
     );
     if(filters != null){
-      print('Applying filters: ${filters.state}, ${filters.priority}, ${filters.tagId}, ${filters.assigneeId}, ${filters.dueBefore}, ${filters.dueAfter}, onlyNotClosed: ${filters.onlyNotClosed}');
       ref.read(tasksListProvider.notifier).setFilters(filters);
     }
   }
