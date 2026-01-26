@@ -11,7 +11,7 @@ final tasksListProvider =
     );
 
 class TasksListNotifier extends StateNotifier<TasksListState> {
-  TasksListNotifier() : super(TasksListState()) {
+  TasksListNotifier() : super(TasksListState.initial()) {
     fetchTasks();
   }
 
@@ -43,11 +43,6 @@ class TasksListNotifier extends StateNotifier<TasksListState> {
 
   void setFilters(TaskFilters filters) {
     state = state.copyWith(filters: filters);
-    fetchTasks();
-  }
-
-  void setSort(TaskSort? sort) {
-    state = state.copyWith(sort: sort);
     fetchTasks();
   }
 
@@ -101,6 +96,15 @@ class TasksListNotifier extends StateNotifier<TasksListState> {
 
   void clearAllFilters() {
     state = state.copyWith(filters: const TaskFilters(onlyNotClosed: false));
+    fetchTasks();
+  }
+
+  void setSort(TaskSort sort) {
+    state = state.copyWith(sort: sort);
+    fetchTasks();
+  }
+  void resetSort() {
+    state = state.copyWith(sort: TaskSort.defaultSort);
     fetchTasks();
   }
 }

@@ -195,35 +195,49 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.secondary,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(
-                          context,
-                          TaskFilters(
-                            state: _state,
-                            priority: _priority,
-                            dueAfter: _dueAfter,
-                            dueBefore: _dueBefore,
-                            assigneeId: _assigneeId,
-                            assigneeLabel: _assigneeLabel,
-                            tagId: _tagId,
-                            tagLabel: _tagLabel,
-                            onlyNotClosed: _onlyNotClosed,
-                            onlyMine: _onlyMine,
+                    child: Row(
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
-                        );
-                      },
-                      child: Text(
-                        'Appliquer',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSecondary,
+                          child: const Text('Annuler'),
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.secondary,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(
+                              context,
+                              TaskFilters(
+                                state: _state,
+                                priority: _priority,
+                                dueAfter: _dueAfter,
+                                dueBefore: _dueBefore,
+                                assigneeId: _assigneeId,
+                                assigneeLabel: _assigneeLabel,
+                                tagId: _tagId,
+                                tagLabel: _tagLabel,
+                                onlyNotClosed: _onlyNotClosed,
+                                onlyMine: _onlyMine,
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Appliquer',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

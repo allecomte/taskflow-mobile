@@ -10,11 +10,18 @@ class TasksListState {
   final TaskSort sort;
 
   TasksListState({
-    this.state = LoadState.loading, 
-    this.tasks = const [],
-    this.filters = const TaskFilters(),
-    this.sort = const TaskSort(), 
+    required this.state,
+    required this.tasks,
+    required this.filters,
+    required this.sort,
   });
+
+  factory TasksListState.initial() => TasksListState(
+    state: LoadState.loading,
+    tasks: const [],
+    filters: TaskFilters(),
+    sort: TaskSort.defaultSort,
+  );
 
   TasksListState copyWith({
     LoadState? state,

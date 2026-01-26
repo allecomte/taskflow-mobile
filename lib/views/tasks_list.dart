@@ -27,26 +27,26 @@ class TasksList extends ConsumerWidget {
     final activeFilters = getActiveFilters(filters);
 
     Future<void> onFiltersPressed() async {
-    final filters = await showModalBottomSheet<TaskFilters>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => const FilterTaskBottomSheet(),
-    );
-    if(filters != null){
-      ref.read(tasksListProvider.notifier).setFilters(filters);
+      final filters = await showModalBottomSheet<TaskFilters>(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => const FilterTaskBottomSheet(),
+      );
+      if (filters != null) {
+        ref.read(tasksListProvider.notifier).setFilters(filters);
+      }
     }
-  }
 
-  Future<void> onSortPressed() async {
-    final sort = await showModalBottomSheet<TaskSort>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => const SortTaskBottomSheet(),
-    );
-    if(sort != null){
-      ref.read(tasksListProvider.notifier).setSort(sort);
+    Future<void> onSortPressed() async {
+      final sort = await showModalBottomSheet<TaskSort>(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => const SortTaskBottomSheet(),
+      );
+      if (sort != null) {
+        ref.read(tasksListProvider.notifier).setSort(sort);
+      }
     }
-  }
 
     return Scaffold(
       appBar: AppBarCurrentView(
@@ -59,9 +59,7 @@ class TasksList extends ConsumerWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => TaskForm(),
-                        ),
+                        MaterialPageRoute(builder: (_) => TaskForm()),
                       );
                     },
                     icon: Icon(
@@ -92,89 +90,101 @@ class TasksList extends ConsumerWidget {
                     children: [
                       ElevatedButton.icon(
                         onPressed: onFiltersPressed,
-                        icon: Icon(
-                          FontAwesomeIcons.filter,
-                          size: 16,
-                        ),
+                        icon: Icon(FontAwesomeIcons.filter, size: 16),
                         label: Text('Filtrer'),
                       ),
                       ElevatedButton.icon(
                         onPressed: onSortPressed,
-                        icon: Icon(
-                          FontAwesomeIcons.sort,
-                          size: 16,
-                        ),
-                        label: Text('Trier'),
+                        icon: Icon(tasksList.sort.ascending ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown, size: 16),
+                        label: Text('Tri : ${tasksList.sort.label}'),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // CLEAR FILTERS BUTTON
-                  if (filters.state != null ||
-                      filters.priority != null ||
-                      filters.assigneeId != null ||
-                      filters.tagId != null ||
-                      filters.dueAfter != null ||
-                      filters.dueBefore != null ||
-                      filters.onlyNotClosed ||
-                      filters.onlyMine)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton.icon(
-                        onPressed: () {
-                          ref
-                              .read(tasksListProvider.notifier)
-                              .clearAllFilters();
-                        },
-                        icon: Icon(
-                          FontAwesomeIcons.xmark,
-                          size: 16,
+                  Row(
+                    children: [
+                      if (filters.state != null ||
+                          filters.priority != null ||
+                          filters.assigneeId != null ||
+                          filters.tagId != null ||
+                          filters.dueAfter != null ||
+                          filters.dueBefore != null ||
+                          filters.onlyNotClosed ||
+                          filters.onlyMine)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              ref
+                                  .read(tasksListProvider.notifier)
+                                  .clearAllFilters();
+                            },
+                            icon: Icon(FontAwesomeIcons.xmark, size: 16),
+                            label: Text('Effacer les filtres'),
+                          ),
                         ),
-                        label: Text('Effacer les filtres'),
+                        const Spacer(),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            '${tasksList.tasks.length} tâche${tasksList.tasks.length > 1 ? 's' : ''} trouvée${tasksList.tasks.length > 1 ? 's' : ''}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        )
+                    ],
+                  ),
+                  // CLEAR FILTERS BUTTON
+
+                  // FILTERS SELECTED
+                  if (filters.hasFilters)
+                    SizedBox(
+                      height: 40,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: activeFilters.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          final filter = activeFilters[index];
+                          return FilterChip(
+                            label: Text(filter.label),
+                            onSelected: (_) {},
+                            onDeleted: () {
+                              ref
+                                  .read(tasksListProvider.notifier)
+                                  .removeOneFilter(filter.key);
+                            },
+                          );
+                        },
                       ),
                     ),
-                    // FILTERS SELECTED
-                    if(filters.hasFilters)
-                    SizedBox(height: 40, child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: activeFilters.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 8),
-                      itemBuilder: (context,index){
-                        final filter = activeFilters[index];
-                        return FilterChip(
-                          label: Text(filter.label), 
-                          onSelected: (_){},
-                          onDeleted: (){
-                            ref.read(tasksListProvider.notifier).removeOneFilter(filter.key);
-                          },
-                          );
-                      }, 
-                      ),),
                   const SizedBox(height: 16),
                   tasksList.state == LoadState.loading
-                  ? ListSkeleton(itemCount: 10)
-                  : tasksList.state == LoadState.error
-                  ? Text(
-                      'Erreur lors du chargement des tâches',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    )
-                  : tasksList.tasks.isEmpty
-                  ? Text(
-                      "Vous n'avez à aucune tâche",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: ((context, index) =>
-                          CardTask(task: tasksList.tasks[index])),
-                      itemCount: tasksList.tasks.length,
-                    )
+                      ? ListSkeleton(itemCount: 10)
+                      : tasksList.state == LoadState.error
+                      ? Text(
+                          'Erreur lors du chargement des tâches',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        )
+                      : tasksList.tasks.isEmpty
+                      ? Text(
+                          "Vous n'avez à aucune tâche",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: ((context, index) =>
+                              CardTask(task: tasksList.tasks[index])),
+                          itemCount: tasksList.tasks.length,
+                        ),
                 ],
               ),
             ),
