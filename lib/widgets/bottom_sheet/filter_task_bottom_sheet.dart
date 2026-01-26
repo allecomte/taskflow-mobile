@@ -164,6 +164,7 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                     setState(() {
                       _assigneeId = user.id;
                       _assigneeLabel = '${user.firstname} ${user.lastname}';
+                      _onlyMine = false;
                     }),
                   },
                 ),
@@ -182,6 +183,7 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
               const SizedBox(height: 16),
               CheckboxBooleanItem(
                 initialValue: _onlyMine,
+                enabled: _assigneeId == null,
                 label: 'Afficher uniquement mes tâches',
                 onChanged: (value) {
                   setState(() {

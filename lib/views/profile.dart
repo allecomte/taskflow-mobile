@@ -65,11 +65,10 @@ class ProfileState extends ConsumerState<Profile> {
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16),
-            child: user == null
+            child: Center(
+              child: user == null
                 ? Text('Aucun utilisateur connecté')
                 : Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // Personal Information Section
                       Container(
@@ -180,6 +179,7 @@ class ProfileState extends ConsumerState<Profile> {
                       ),
                     ],
                   ),
+            ),
           ),
         ),
       ),

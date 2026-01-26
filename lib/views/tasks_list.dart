@@ -103,6 +103,7 @@ class TasksList extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Row(
                     children: [
+                      // CLEAR FILTERS BUTTON
                       if (filters.state != null ||
                           filters.priority != null ||
                           filters.assigneeId != null ||
@@ -136,8 +137,6 @@ class TasksList extends ConsumerWidget {
                         )
                     ],
                   ),
-                  // CLEAR FILTERS BUTTON
-
                   // FILTERS SELECTED
                   if (filters.hasFilters)
                     SizedBox(

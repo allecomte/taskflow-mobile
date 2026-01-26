@@ -30,6 +30,7 @@ class TasksListNotifier extends StateNotifier<TasksListState> {
         assignee: state.filters.assigneeId,
         dueBefore: state.filters.dueBefore?.toIso8601String(),
         dueAfter: state.filters.dueAfter?.toIso8601String(),
+        onlyMine: state.filters.onlyMine,
       );
       state = state.copyWith(state: LoadState.success, tasks: response.data);
     } catch (e) {
