@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController passwordController;
+  final TextEditingController? confirmController;
   final String label;
 
   const PasswordField({
     super.key,
     required this.passwordController,
-    required this.label,
+    required this.label, 
+    this.confirmController,
   });
 
   @override
@@ -41,6 +43,9 @@ class PasswordFieldState extends State<PasswordField> {
         }
         if (value.length < 8) {
           return 'Minimum 8 caractères';
+        }
+        if(widget.confirmController != null && value != widget.confirmController!.text){
+          return 'Les mots de passe renseignés doivent être identiques';
         }
         return null;
       },

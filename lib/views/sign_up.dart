@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskflow_mobile/views/login.dart';
+import 'package:taskflow_mobile/widgets/form/password_field.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -111,72 +112,76 @@ class SignUpState extends State<SignUp> {
                         ),
                         Padding(
                           padding: EdgeInsetsGeometry.only(top: 30),
-                          child: TextFormField(
-                            controller: _passwordController,
-                            obscureText: !_isPasswordVisible,
-                            keyboardType: TextInputType.visiblePassword,
-                            enableSuggestions: false,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                              labelText: "Mot de passe",
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Le mot de passe est requis';
-                              }
-                              if (value.length < 8) {
-                                return 'Minimum 8 caractères';
-                              }
-                              return null;
-                            },
-                          ),
+                          child: 
+                          PasswordField(passwordController: _passwordController, label: "Mot de passe")
+                          // TextFormField(
+                          //   controller: _passwordController,
+                          //   obscureText: !_isPasswordVisible,
+                          //   keyboardType: TextInputType.visiblePassword,
+                          //   enableSuggestions: false,
+                          //   autocorrect: false,
+                          //   decoration: InputDecoration(
+                          //     labelText: "Mot de passe",
+                          //     suffixIcon: IconButton(
+                          //       icon: Icon(
+                          //         _isPasswordVisible
+                          //             ? Icons.visibility
+                          //             : Icons.visibility_off,
+                          //       ),
+                          //       onPressed: () {
+                          //         setState(() {
+                          //           _isPasswordVisible = !_isPasswordVisible;
+                          //         });
+                          //       },
+                          //     ),
+                          //   ),
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'Le mot de passe est requis';
+                          //     }
+                          //     if (value.length < 8) {
+                          //       return 'Minimum 8 caractères';
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
                         ),
                         Padding(
                           padding: EdgeInsetsGeometry.only(top: 30),
-                          child: TextFormField(
-                            controller: _confirmPasswordController,
-                            obscureText: !_isConfirmPasswordVisible,
-                            keyboardType: TextInputType.visiblePassword,
-                            enableSuggestions: false,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                              labelText: "Confirmer le mot de passe",
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isConfirmPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isConfirmPasswordVisible =
-                                        !_isConfirmPasswordVisible;
-                                  });
-                                },
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'La confirmation est requise';
-                              }
-                              if (value != _passwordController.text) {
-                                return 'Les mots de passe renseignés doivent être identiques';
-                              }
-                              return null;
-                            },
-                          ),
+                          child: 
+                          PasswordField(passwordController: _confirmPasswordController, label: "Confirmer le mot de passe", confirmController: _passwordController)
+                          // TextFormField(
+                          //   controller: _confirmPasswordController,
+                          //   obscureText: !_isConfirmPasswordVisible,
+                          //   keyboardType: TextInputType.visiblePassword,
+                          //   enableSuggestions: false,
+                          //   autocorrect: false,
+                          //   decoration: InputDecoration(
+                          //     labelText: "Confirmer le mot de passe",
+                          //     suffixIcon: IconButton(
+                          //       icon: Icon(
+                          //         _isConfirmPasswordVisible
+                          //             ? Icons.visibility
+                          //             : Icons.visibility_off,
+                          //       ),
+                          //       onPressed: () {
+                          //         setState(() {
+                          //           _isConfirmPasswordVisible =
+                          //               !_isConfirmPasswordVisible;
+                          //         });
+                          //       },
+                          //     ),
+                          //   ),
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'La confirmation est requise';
+                          //     }
+                          //     if (value != _passwordController.text) {
+                          //       return 'Les mots de passe renseignés doivent être identiques';
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
                         ),
                       ],
                     ),

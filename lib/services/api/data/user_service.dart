@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:taskflow_mobile/models/user/user_detailed.dart';
 import 'package:taskflow_mobile/models/user/user_light.dart';
@@ -22,6 +24,31 @@ class UserService {
       return data.map((json) => UserDetailed.fromJson(json)).toList();
     } on DioException catch (e) {
       throw Exception('Failed to load users: ${e.message}');
+    }
+  }
+
+  Future<UserLight> updateUserProfile({required String firstname, required String lastname,required String email}) async {
+    try {
+      final response = await _dio.patch('users/profile', data: jsonEncode({
+        'firstname': firstname,
+        'lastname': lastname,
+        'email': email,
+      }));
+      return UserLight.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception('Failed to update user profile: ${e.message}');
+    }
+  }
+
+  Future<UserLight> updateUserPassword({required String currentPassword, required String newPassword}) async {
+    try {
+      final response = await _dio.patch('users/password', data: jsonEncode({
+        'currentPassword': currentPassword,
+        'newPassword': newPassword
+      }));
+      return UserLight.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception('Failed to update user password: ${e.message}');
     }
   }
 }
