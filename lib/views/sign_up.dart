@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:taskflow_mobile/providers/auth_provider.dart';
+import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/login.dart';
 import 'package:taskflow_mobile/widgets/form/password_field.dart';
 
-class SignUp extends StatefulWidget {
+class SignUp extends ConsumerStatefulWidget {
   const SignUp({super.key});
 
   @override
-  State<StatefulWidget> createState() => SignUpState();
+  ConsumerState<SignUp> createState() => SignUpState();
 }
 
-class SignUpState extends State<SignUp> {
+class SignUpState extends ConsumerState<SignUp> {
   final _formKey = GlobalKey<FormState>();
 
   final _lastnameController = TextEditingController();
@@ -17,21 +20,41 @@ class SignUpState extends State<SignUp> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
 
-  bool _isLoading = false;
-  String? _error;
+  @override
+  void initState(){
+    super.initState();
+  }
 
-  Future<void> _signUp() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+  void _signUp() {
+    ref
+        .read(authProvider.notifier)
+        .register(
+          firstname: _firstnameController.text,
+          lastname: _lastnameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<String?>>(authProvider, (previous,next){
+      next.whenOrNull(
+        data: (token) {
+          if(token != null){
+            Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const Home()),
+          );
+          }
+        },
+        error: (_,_){
+
+        }
+      );
+    });
+    final authState = ref.watch(authProvider);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -112,91 +135,41 @@ class SignUpState extends State<SignUp> {
                         ),
                         Padding(
                           padding: EdgeInsetsGeometry.only(top: 30),
-                          child: 
-                          PasswordField(passwordController: _passwordController, label: "Mot de passe")
-                          // TextFormField(
-                          //   controller: _passwordController,
-                          //   obscureText: !_isPasswordVisible,
-                          //   keyboardType: TextInputType.visiblePassword,
-                          //   enableSuggestions: false,
-                          //   autocorrect: false,
-                          //   decoration: InputDecoration(
-                          //     labelText: "Mot de passe",
-                          //     suffixIcon: IconButton(
-                          //       icon: Icon(
-                          //         _isPasswordVisible
-                          //             ? Icons.visibility
-                          //             : Icons.visibility_off,
-                          //       ),
-                          //       onPressed: () {
-                          //         setState(() {
-                          //           _isPasswordVisible = !_isPasswordVisible;
-                          //         });
-                          //       },
-                          //     ),
-                          //   ),
-                          //   validator: (value) {
-                          //     if (value == null || value.isEmpty) {
-                          //       return 'Le mot de passe est requis';
-                          //     }
-                          //     if (value.length < 8) {
-                          //       return 'Minimum 8 caractères';
-                          //     }
-                          //     return null;
-                          //   },
-                          // ),
+                          child: PasswordField(
+                            passwordController: _passwordController,
+                            label: "Mot de passe",
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsetsGeometry.only(top: 30),
-                          child: 
-                          PasswordField(passwordController: _confirmPasswordController, label: "Confirmer le mot de passe", confirmController: _passwordController)
-                          // TextFormField(
-                          //   controller: _confirmPasswordController,
-                          //   obscureText: !_isConfirmPasswordVisible,
-                          //   keyboardType: TextInputType.visiblePassword,
-                          //   enableSuggestions: false,
-                          //   autocorrect: false,
-                          //   decoration: InputDecoration(
-                          //     labelText: "Confirmer le mot de passe",
-                          //     suffixIcon: IconButton(
-                          //       icon: Icon(
-                          //         _isConfirmPasswordVisible
-                          //             ? Icons.visibility
-                          //             : Icons.visibility_off,
-                          //       ),
-                          //       onPressed: () {
-                          //         setState(() {
-                          //           _isConfirmPasswordVisible =
-                          //               !_isConfirmPasswordVisible;
-                          //         });
-                          //       },
-                          //     ),
-                          //   ),
-                          //   validator: (value) {
-                          //     if (value == null || value.isEmpty) {
-                          //       return 'La confirmation est requise';
-                          //     }
-                          //     if (value != _passwordController.text) {
-                          //       return 'Les mots de passe renseignés doivent être identiques';
-                          //     }
-                          //     return null;
-                          //   },
-                          // ),
+                          child: PasswordField(
+                            passwordController: _confirmPasswordController,
+                            label: "Confirmer le mot de passe",
+                            confirmController: _passwordController,
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  if (authState.hasError)
+                    Padding(
+                      padding: EdgeInsetsGeometry.only(top: 30),
+                      child: Text(
+                        authState.error.toString(),
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
                   Padding(
                     padding: EdgeInsetsGeometry.only(top: 30),
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_isLoading) {
-                          return;
+                        if (authState.isLoading) {
+                          null;
                         } else if (_formKey.currentState!.validate()) {
-                          _signUp;
+                          _signUp();
                         }
                       },
-                      child: _isLoading
+                      child: authState.isLoading
                           ? CircularProgressIndicator()
                           : Text(
                               "S'inscrire",

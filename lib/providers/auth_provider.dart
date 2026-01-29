@@ -53,6 +53,36 @@ class AuthNotifier extends AsyncNotifier<String?> {
     }
   }
 
+  Future<void> register({
+    required String firstname,
+    required String lastname,
+    required String email,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+    try{
+      final result = await _authApi.register(firstname: firstname, lastname: lastname, email: email, password: password);
+      await SecureStorage.saveToken(result['token']);
+
+      final userJson = result['user'] as Map<String, dynamic>;
+
+      final user = UserLight(
+        id: userJson['_id'] as String,
+        firstname: userJson['firstname'] as String,
+        lastname: userJson['lastname'] as String,
+        email: userJson['email'] as String,
+        roles: List<String>.from(userJson['roles'] ?? []),
+        projectsOwned: List<String>.from([]),
+      );
+
+      _ref.read(userProvider.notifier).setUser(user);
+
+      state = AsyncData(result['token']);
+    } on ApiException catch (e) {
+      state = AsyncError(e.message, StackTrace.current);
+    }
+  }
+
   Future<void> logout() async {
     await SecureStorage.deleteToken();
     _ref.read(userProvider.notifier).clearUser();

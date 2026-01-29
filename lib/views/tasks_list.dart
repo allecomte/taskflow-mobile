@@ -173,7 +173,7 @@ class TasksList extends ConsumerWidget {
                       ? Text(
                           "Vous n'avez à aucune tâche",
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontStyle: FontStyle.italic,
                           ),
                         )

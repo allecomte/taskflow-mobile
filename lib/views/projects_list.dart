@@ -123,13 +123,13 @@ class ProjectsListState extends ConsumerState<ProjectsList> with RouteAware {
                       ),
                     )
                   : projects.isEmpty
-                  ? Text(
-                      "Vous n'avez aucun projet",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    )
+                  ? Center(child: Text(
+                        "Vous n'avez aucun projet",
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),) 
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

@@ -5,19 +5,38 @@ import 'package:taskflow_mobile/services/api/dio_client.dart';
 class AuthApi {
   final Dio _dio = DioClient().dio;
 
-  Future<Map<String, dynamic>> login({required String email, required String password}) async {
-    try{
+  Future<Map<String, dynamic>> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
       final response = await _dio.post(
-      'users/login',
-      data: {'email': email, 'password': password},
-    );
-    return response.data;
-    // return response.data['token'];
-    }on DioException catch (e) {
-      final message =
-          e.response?.data['message'] ?? 'Identifiants invalides';
+        'users/login',
+        data: {'email': email, 'password': password},
+      );
+      return response.data;
+      // return response.data['token'];
+    } on DioException catch (e) {
+      final message = e.response?.data['message'] ?? 'Identifiants invalides';
       throw ApiException(message);
     }
-    
+  }
+
+  Future<Map<String, dynamic>> register({
+    required String firstname,
+    required String lastname,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _dio.post(
+        'users/register',
+        data: {'firstname': firstname, 'lastname': lastname, 'email': email, 'password': password},
+      );
+      return response.data;
+    } on DioException catch (e) {
+      final message = e.response?.data['message'] ?? 'Création du compte en erreur';
+      throw ApiException(message);
+    }
   }
 }

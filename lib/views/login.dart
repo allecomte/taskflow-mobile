@@ -16,7 +16,6 @@ class Login extends ConsumerStatefulWidget {
 class LoginState extends ConsumerState<Login> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -100,7 +99,6 @@ class LoginState extends ConsumerState<Login> {
                         _login();
                       }
                     },
-                    // onPressed: authState.isLoading ? null : _formKey.currentState!.validate() ? _login : null,
                     child: authState.isLoading
                         ? CircularProgressIndicator()
                         : Text(
