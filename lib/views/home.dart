@@ -7,8 +7,8 @@ import 'package:taskflow_mobile/main.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
+import 'package:taskflow_mobile/providers/services/project_service_provider.dart';
 // Services
-import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/task_service.dart';
 // Views
 import 'package:taskflow_mobile/views/projects_list.dart';
@@ -73,7 +73,7 @@ class HomeState extends ConsumerState<Home> with RouteAware{
   }
 
   Future<void> getData() async {
-    final projectService = ProjectService();
+    final projectService = ref.read(projectServiceProvider);
       try {
         final dataProjects = await projectService.getProjects(pagination: true, limit: numberOfItemsToDisplay, page: 1, getAlsoArchived: false, sort: '-createdAt');
         setState(() {

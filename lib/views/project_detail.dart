@@ -10,8 +10,8 @@ import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
 import 'package:taskflow_mobile/models/user/user_detailed.dart';
+import 'package:taskflow_mobile/providers/services/project_service_provider.dart';
 // Services
-import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/services/api/data/tag_service.dart';
 // Utils
 import 'package:taskflow_mobile/utils/format_date.dart';
@@ -84,7 +84,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   }
 
   Future<void> fetchProject() async {
-    final projectService = ProjectService();
+    final projectService = ref.read(projectServiceProvider);
     final user = ref.read(userProvider);
     final isUserManager = user!.roles.contains('ROLE_MANAGER');
     try {
@@ -227,7 +227,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
 
   Future<void> _addMember(UserDetailed user) async {
     try {
-      final projectService = ProjectService();
+      final projectService = ref.read(projectServiceProvider);
       await projectService.addMemberToProject(
         projectId: widget.projectLight.id,
         userId: user.id,
@@ -263,7 +263,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
 
   Future<void> _deleteMember(User user) async {
     try {
-      final projectService = ProjectService();
+      final projectService = ref.read(projectServiceProvider);
       await projectService.removeMemberFromProject(
         projectId: widget.projectLight.id,
         userId: user.id,
@@ -374,7 +374,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
 
   Future<void> _deleteProject() async {
     try {
-      final projectService = ProjectService();
+      final projectService = ref.read(projectServiceProvider);
       await projectService.deleteProject(projectId: widget.projectLight.id);
       ref.read(userProvider.notifier).updateUser((currentUser) {
         return currentUser.copyWith(

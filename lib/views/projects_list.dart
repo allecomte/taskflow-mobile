@@ -6,8 +6,8 @@ import 'package:taskflow_mobile/enums/load_state.dart';
 import 'package:taskflow_mobile/main.dart';
 // Models
 import 'package:taskflow_mobile/models/project/project_light.dart';
+import 'package:taskflow_mobile/providers/services/project_service_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
-import 'package:taskflow_mobile/services/api/data/project_service.dart';
 import 'package:taskflow_mobile/views/project_form.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
@@ -52,7 +52,7 @@ class ProjectsListState extends ConsumerState<ProjectsList> with RouteAware {
   }
 
   Future<void> fetchProjects() async {
-    final projectService = ProjectService();
+    final projectService = ref.read(projectServiceProvider);
     try {
       final dataProjects = await projectService.getProjects(
         pagination: false,
@@ -118,6 +118,7 @@ class ProjectsListState extends ConsumerState<ProjectsList> with RouteAware {
                   : projectsState == LoadState.error
                   ? Text(
                       'Erreur lors du chargement des projets',
+                      key: Key('error_loading_projects_message'),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.error,
                       ),
@@ -125,6 +126,7 @@ class ProjectsListState extends ConsumerState<ProjectsList> with RouteAware {
                   : projects.isEmpty
                   ? Center(child: Text(
                         "Vous n'avez aucun projet",
+                        key: Key('no_project_message'),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontStyle: FontStyle.italic,
