@@ -7,7 +7,9 @@ import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/services/api/dio_client.dart';
 
 class ProjectService {
-  final Dio _dio = DioClient().dio;
+  final Dio _dio;
+
+  ProjectService({Dio? dio}) : _dio = dio ?? DioClient().dio;
 
   Future<ApiResponsePagination<ProjectLight>> getProjects({
     bool pagination = false,
