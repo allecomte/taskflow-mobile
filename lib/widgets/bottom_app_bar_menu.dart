@@ -68,16 +68,17 @@ class BottomAppBarMenu extends StatelessWidget {
               ),
             ),
             // -------- SEARCH BUTTON
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                FontAwesomeIcons.magnifyingGlass,
-                size: 35,
-                color: currentView == 'search'
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.inversePrimary,
-              ),
-            ),
+            //TODO
+            // IconButton(
+            //   onPressed: () {},
+            //   icon: Icon(
+            //     FontAwesomeIcons.magnifyingGlass,
+            //     size: 35,
+            //     color: currentView == 'search'
+            //         ? Theme.of(context).colorScheme.onPrimary
+            //         : Theme.of(context).colorScheme.inversePrimary,
+            //   ),
+            // ),
             // -------- PROFILE BUTTON
             IconButton(
               onPressed: () {

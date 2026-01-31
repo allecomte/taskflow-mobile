@@ -27,6 +27,7 @@ class DioClient {
         onError: (error, handler) {
           if (error.response?.statusCode == 401) {
             // logout / refresh token
+            handler.next(error);
           }
           handler.next(error);
         },

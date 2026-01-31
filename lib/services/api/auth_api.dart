@@ -15,7 +15,6 @@ class AuthApi {
         data: {'email': email, 'password': password},
       );
       return response.data;
-      // return response.data['token'];
     } on DioException catch (e) {
       final message = e.response?.data['message'] ?? 'Identifiants invalides';
       throw ApiException(message);
