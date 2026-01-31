@@ -10,10 +10,6 @@ class CardProject extends StatelessWidget {
     return Card(
       color: Theme.of(context).colorScheme.primaryFixed,
       child: ListTile(
-        // leading: Icon(
-        //   FontAwesomeIcons.solidFolder,
-        //   color: Theme.of(context).colorScheme.primary,
-        // ),
         title: Text(
           project.title,
           style: TextStyle(
@@ -30,7 +26,6 @@ class CardProject extends StatelessWidget {
                 '${project.myTasks.length} ${project.myTasks.length > 1 ? 'tâches assignées' : 'tâche assignée'}',
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
-        // trailing: Icon(FontAwesomeIcons.chevronRight),
         onTap: (){
           MaterialPageRoute route = MaterialPageRoute(builder: (context) => ProjectDetail(projectLight: project));
           Navigator.of(context).push(route);

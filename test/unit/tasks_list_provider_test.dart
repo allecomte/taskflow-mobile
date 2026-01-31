@@ -56,8 +56,8 @@ class FakeTasksNotifier extends TasksListNotifier {
 }
 
 final _sampleTasks = [
-  TaskLight(id: 't1', title: 'T1', state: 'todo', priority: 'low', dueAt: '2025-01-01'),
-  TaskLight(id: 't2', title: 'T2', state: 'done', priority: 'high', dueAt: '2025-02-01'),
+  TaskLight(id: 't1', title: 'T1', state: 'OPEN', priority: 'LOW', dueAt: '2025-01-01'),
+  TaskLight(id: 't2', title: 'T2', state: 'IN_PROGRESS', priority: 'HIGH', dueAt: '2025-02-01'),
 ];
 
 void main() {

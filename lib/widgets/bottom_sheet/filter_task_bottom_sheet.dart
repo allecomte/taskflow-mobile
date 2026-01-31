@@ -8,7 +8,7 @@ import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/list/task_filters.dart';
 import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
-import 'package:taskflow_mobile/widgets/checkbox_boolean_item.dart';
+import 'package:taskflow_mobile/widgets/form/checkbox_boolean_item.dart';
 import 'package:taskflow_mobile/widgets/date_picker_field.dart';
 import 'package:taskflow_mobile/widgets/select_from_enum.dart';
 import 'package:taskflow_mobile/widgets/select_tags.dart';
