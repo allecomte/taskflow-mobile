@@ -21,7 +21,7 @@ class ChipTag extends StatelessWidget {
         maxWidth: MediaQuery.of(context).size.width * 0.9,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryFixed,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Material(
@@ -38,7 +38,7 @@ class ChipTag extends StatelessWidget {
                   child: Text(
                     tag.name,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ),
@@ -51,7 +51,7 @@ class ChipTag extends StatelessWidget {
                     child: Icon(
                       FontAwesomeIcons.xmark,
                       size: 16,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ),

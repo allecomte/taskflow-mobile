@@ -25,7 +25,7 @@ class TaskService {
   }) async {
     try {
       final response = await _dio.get(
-        'tasks',
+        '/tasks',
         queryParameters: {
           'pagination': pagination,
           if (pagination && page != null) 'page': page,
@@ -53,7 +53,7 @@ class TaskService {
 
   Future<TaskDetailed> getTaskById(String taskId) async {
     try{
-      final response = await _dio.get('tasks/$taskId');
+      final response = await _dio.get('/tasks/$taskId');
       final task = TaskDetailed.fromJson(response.data);
       return task;
     }on DioException catch (e) {
@@ -72,7 +72,7 @@ class TaskService {
   }) async {
     try {
       final response = await _dio.post(
-        'tasks',
+        '/tasks',
         data: jsonEncode({
           'title': title,
           'description': description,
@@ -103,7 +103,7 @@ class TaskService {
   }) async {
     try {
       final response = await _dio.patch(
-        'tasks/$id',
+        '/tasks/$id',
         data: jsonEncode({
           'title': title,
           'description': description,
@@ -126,7 +126,7 @@ class TaskService {
   }) async {
     try {
       final response = await _dio.patch(
-        'tasks/$id',
+        '/tasks/$id',
         data: jsonEncode({
           'state': state
         }),
@@ -140,7 +140,7 @@ class TaskService {
 
   Future<void> deleteTask({required String taskId}) async {
     try {
-      await _dio.delete('tasks/$taskId');
+      await _dio.delete('/tasks/$taskId');
     } on DioException catch (e) {
       throw Exception('Failed to delete task : ${e.message}');
     }

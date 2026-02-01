@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/providers/auth_provider.dart';
+import 'package:taskflow_mobile/providers/theme_mode_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/user_service.dart';
 import 'package:taskflow_mobile/utils/snackbar_global.dart';
 import 'package:taskflow_mobile/views/login.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
+import 'package:taskflow_mobile/widgets/card_theme_selector.dart';
 import 'package:taskflow_mobile/widgets/form/email_field.dart';
 import 'package:taskflow_mobile/widgets/form/password_field.dart';
 
@@ -134,6 +136,39 @@ class ProfileState extends ConsumerState<Profile> {
                   ? Text('Aucun utilisateur connecté')
                   : Column(
                       children: [
+                        // Theme mode
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          margin: const EdgeInsets.only(bottom: 24),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withAlpha(50),
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Thème',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: CardThemeSelector(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 16),
                         // Personal Information Section
                         Container(
                           width: MediaQuery.of(context).size.width * 0.85,
@@ -244,7 +279,7 @@ class ProfileState extends ConsumerState<Profile> {
                               Form(
                                 key: _updatePasswordFormKey,
                                 child: Column(
-                                children: [
+                                  children: [
                                     PasswordField(
                                       passwordController: _passwordController,
                                       label: 'Mot de passe actuel',
@@ -256,16 +291,19 @@ class ProfileState extends ConsumerState<Profile> {
                                       label: 'Nouveau mot de passe',
                                       confirmController: _passwordController,
                                     ),
-                                ],
-                              )),
-                              
+                                  ],
+                                ),
+                              ),
+
                               SizedBox(height: 24),
                               Center(
                                 child: ElevatedButton(
-                                  onPressed: (){
-                                    if(_isUpdatePasswordProcessing){
+                                  onPressed: () {
+                                    if (_isUpdatePasswordProcessing) {
                                       return;
-                                    }else if (_updatePasswordFormKey.currentState!.validate()){
+                                    } else if (_updatePasswordFormKey
+                                        .currentState!
+                                        .validate()) {
                                       _onSubmitPasswordController();
                                     }
                                   },

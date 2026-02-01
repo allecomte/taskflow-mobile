@@ -11,7 +11,7 @@ class AuthApi {
   }) async {
     try {
       final response = await _dio.post(
-        'users/login',
+        '/users/login',
         data: {'email': email, 'password': password},
       );
       return response.data;
@@ -29,7 +29,7 @@ class AuthApi {
   }) async {
     try {
       final response = await _dio.post(
-        'users/register',
+        '/users/register',
         data: {'firstname': firstname, 'lastname': lastname, 'email': email, 'password': password},
       );
       return response.data;

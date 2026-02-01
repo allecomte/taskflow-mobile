@@ -90,13 +90,43 @@ class TasksList extends ConsumerWidget {
                     children: [
                       ElevatedButton.icon(
                         onPressed: onFiltersPressed,
-                        icon: Icon(FontAwesomeIcons.filter, size: 16),
-                        label: Text('Filtrer'),
+                        icon: Icon(
+                          FontAwesomeIcons.filter,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        label: Text(
+                          'Filtrer',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary, // fond
+                        ),
                       ),
                       ElevatedButton.icon(
                         onPressed: onSortPressed,
-                        icon: Icon(tasksList.sort.ascending ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown, size: 16),
-                        label: Text('Tri : ${tasksList.sort.label}'),
+                        icon: Icon(
+                          tasksList.sort.ascending
+                              ? FontAwesomeIcons.arrowUp
+                              : FontAwesomeIcons.arrowDown,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        label: Text(
+                          'Tri : ${tasksList.sort.label}',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary, // fond
+                        ),
                       ),
                     ],
                   ),
@@ -124,17 +154,17 @@ class TasksList extends ConsumerWidget {
                             label: Text('Effacer les filtres'),
                           ),
                         ),
-                        const Spacer(),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            '${tasksList.tasks.length} tâche${tasksList.tasks.length > 1 ? 's' : ''} trouvée${tasksList.tasks.length > 1 ? 's' : ''}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                      const Spacer(),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '${tasksList.tasks.length} tâche${tasksList.tasks.length > 1 ? 's' : ''} trouvée${tasksList.tasks.length > 1 ? 's' : ''}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                        )
+                        ),
+                      ),
                     ],
                   ),
                   // FILTERS SELECTED
@@ -148,8 +178,17 @@ class TasksList extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           final filter = activeFilters[index];
                           return FilterChip(
-                            label: Text(filter.label),
+                            label: Text(
+                              filter.label,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
                             onSelected: (_) {},
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
+                            deleteIconColor: Theme.of(context).colorScheme.primary,
                             onDeleted: () {
                               ref
                                   .read(tasksListProvider.notifier)

@@ -24,6 +24,14 @@ dependencies:
   intl: ^0.20.2
   flutter_riverpod: ^2.6.1
   coverage: ^1.15.0
+  flutter_launcher_icons: ^0.14.4
+  shared_preferences: ^2.5.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo_icon.png"
+  remove_alpha_ios: true
 
 dev_dependencies:
   flutter_test:

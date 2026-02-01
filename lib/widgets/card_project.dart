@@ -8,23 +8,23 @@ class CardProject extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).colorScheme.primaryFixed,
+      color: Theme.of(context).colorScheme.primary,
       child: ListTile(
         title: Text(
           project.title,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: project.myTasks.isEmpty
             ? Text(
                 'Aucune tâche assignée',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontStyle: FontStyle.italic),
+                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontStyle: FontStyle.italic),
               )
             : Text(
                 '${project.myTasks.length} ${project.myTasks.length > 1 ? 'tâches assignées' : 'tâche assignée'}',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
         onTap: (){
           MaterialPageRoute route = MaterialPageRoute(builder: (context) => ProjectDetail(projectLight: project));

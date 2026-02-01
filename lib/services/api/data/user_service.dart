@@ -10,7 +10,7 @@ class UserService {
 
   Future<UserLight> getUserProfile() async {
     try {
-      final response = await _dio.get('users/profile');
+      final response = await _dio.get('/users/profile');
       return UserLight.fromJson(response.data);
     } on DioException catch (e) {
       throw Exception('Failed to load user profile: ${e.message}');
@@ -19,7 +19,7 @@ class UserService {
 
   Future<List<UserDetailed>> getUsers() async {
     try{
-      final response = await _dio.get('users');
+      final response = await _dio.get('/users');
       List<dynamic> data = response.data;
       return data.map((json) => UserDetailed.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -29,7 +29,7 @@ class UserService {
 
   Future<UserLight> updateUserProfile({required String firstname, required String lastname,required String email}) async {
     try {
-      final response = await _dio.patch('users/profile', data: jsonEncode({
+      final response = await _dio.patch('/users/profile', data: jsonEncode({
         'firstname': firstname,
         'lastname': lastname,
         'email': email,
@@ -42,7 +42,7 @@ class UserService {
 
   Future<UserLight> updateUserPassword({required String currentPassword, required String newPassword}) async {
     try {
-      final response = await _dio.patch('users/password', data: jsonEncode({
+      final response = await _dio.patch('/users/password', data: jsonEncode({
         'currentPassword': currentPassword,
         'newPassword': newPassword
       }));

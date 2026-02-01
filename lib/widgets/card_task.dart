@@ -10,7 +10,7 @@ class CardTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).colorScheme.primaryFixed,
+      color: Theme.of(context).colorScheme.primary,
       child: ListTile(
         // leading: Icon(
         //   FontAwesomeIcons.solidFolder,
@@ -19,7 +19,7 @@ class CardTask extends StatelessWidget {
         title: Text(
           task.title,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -28,14 +28,14 @@ class CardTask extends StatelessWidget {
           children: [
             Text(
               'Échéance : ${formatDateFr(task.dueAt)}',
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
             ),
             if (displayAssignee)
               task.assignee != null
                   ? Text(
                       'Assignée à ${task.assignee?.firstname} ${task.assignee?.lastname}',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     )
                   : Text(
