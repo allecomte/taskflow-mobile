@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class RemoveTagFromTaskBottomSheet extends StatelessWidget {
   final String tagName;
@@ -59,13 +60,7 @@ class RemoveTagFromTaskBottomSheet extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text('Retirer',style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),),
-                ),
+                child: CustomElevatedButton(label: 'Retirer', onPressed: () => Navigator.pop(context, true))
               ),
             ],
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/providers/auth_provider.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/sign_up.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/form/email_field.dart';
 import 'package:taskflow_mobile/widgets/form/password_field.dart';
 
@@ -91,11 +92,11 @@ class LoginState extends ConsumerState<Login> {
                   ),
                 Padding(
                   padding: EdgeInsetsGeometry.only(top: 30),
-                  child: ElevatedButton(
-                    onPressed: (){
-                      if(authState.isLoading){
+                  child: CustomElevatedButton(
+                    onPressed: () {
+                      if (authState.isLoading) {
                         null;
-                      }else if(_formKey.currentState!.validate()){
+                      } else if (_formKey.currentState!.validate()) {
                         _login();
                       }
                     },
@@ -103,7 +104,10 @@ class LoginState extends ConsumerState<Login> {
                         ? CircularProgressIndicator()
                         : Text(
                             "Se connecter",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                           ),
                   ),
                 ),

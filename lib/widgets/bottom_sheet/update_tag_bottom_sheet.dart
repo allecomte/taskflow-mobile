@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class UpdateTagBottomSheet extends StatefulWidget {
   final String initialName;
@@ -74,11 +75,11 @@ class UpdateTagBottomSheetState extends State<UpdateTagBottomSheet> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
-                    child: ElevatedButton(
+                    child: CustomElevatedButton(
+                      label: 'Enregistrer',
                       onPressed: () {
                         Navigator.pop(context, _nameController.text.trim());
                       },
-                      child: const Text('Enregistrer'),
                     ),
                   ),
                 ],

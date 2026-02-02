@@ -4,6 +4,7 @@ import 'package:taskflow_mobile/enums/load_state.dart';
 import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/services/api/data/tag_service.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 
 class AssociateTagToTaskBottomSheet extends StatefulWidget {
@@ -105,7 +106,7 @@ class AssociateTagToTaskBottomSheetState
                       ),
                     )
                   : DropdownButtonFormField<Tag>(
-                    decoration: const InputDecoration(labelText: 'Tag'),
+                      decoration: const InputDecoration(labelText: 'Tag'),
                       isExpanded: true,
                       items: tagOptions.map((tag) {
                         return DropdownMenuItem<Tag>(
@@ -129,11 +130,11 @@ class AssociateTagToTaskBottomSheetState
                       },
                     ),
               const SizedBox(height: 16),
-              ElevatedButton(
+              CustomElevatedButton(
+                label: 'Associer',
                 onPressed: tagSelected == null
                     ? null
                     : () => Navigator.pop(context, tagSelected),
-                child: Text('Associer'),
               ),
             ],
           ),

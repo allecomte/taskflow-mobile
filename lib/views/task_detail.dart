@@ -24,6 +24,7 @@ import 'package:taskflow_mobile/widgets/bottom_sheet/associate_tag_to_task_botto
 import 'package:taskflow_mobile/widgets/bottom_sheet/remove_tag_from_task_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/update_state_task_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/chip_tag.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 import 'package:taskflow_mobile/widgets/skeleton/small_list_skeleton.dart';
 
@@ -132,7 +133,11 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (_) => UpdateStateTaskBottomSheet(state: TaskState.values.firstWhere((priority) => priority.value == stateValue)),
+      builder: (_) => UpdateStateTaskBottomSheet(
+        state: TaskState.values.firstWhere(
+          (priority) => priority.value == stateValue,
+        ),
+      ),
     );
     if (newState == null) return;
     _updateTaskState(newState);
@@ -141,12 +146,15 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
   Future<void> _updateTaskState(TaskState state) async {
     final taskService = TaskService();
     try {
-      await taskService.updateTaskState(id: widget.taskLight.id, state: state.value);
+      await taskService.updateTaskState(
+        id: widget.taskLight.id,
+        state: state.value,
+      );
       if (!mounted) return;
       SnackbarGlobal.showSuccess(
         'Priorité de la tâche mise à jour avec succès',
       );
-      if(taskDetail != null){
+      if (taskDetail != null) {
         setState(() {
           taskDetail = taskDetail!.copyWith(state: state.value);
         });
@@ -196,17 +204,9 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
             ),
             child: const Text('Annuler'),
           ),
-          ElevatedButton(
+          CustomElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-            ),
-            child: Text(
-              'Supprimer',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-            ),
+            label: 'Supprimer',
           ),
         ],
       ),
@@ -341,15 +341,17 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
-                      isUserAssignee ?
-                      IconButton(
-                        onPressed: () => _onUpdateStatePressed(task.state),
-                        icon: Icon(
-                          FontAwesomeIcons.penToSquare,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 16,
-                        ),
-                      ) : SizedBox.shrink(),
+                      isUserAssignee
+                          ? IconButton(
+                              onPressed: () =>
+                                  _onUpdateStatePressed(task.state),
+                              icon: Icon(
+                                FontAwesomeIcons.penToSquare,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 16,
+                              ),
+                            )
+                          : SizedBox.shrink(),
                     ],
                   ),
                   SizedBox(height: 10),

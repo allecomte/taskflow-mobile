@@ -29,6 +29,7 @@ import 'package:taskflow_mobile/widgets/bottom_sheet/delete_user_bottom_sheet.da
 import 'package:taskflow_mobile/widgets/bottom_sheet/update_tag_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
 import 'package:taskflow_mobile/widgets/chip_tag.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/item_member.dart';
 import 'package:taskflow_mobile/widgets/skeleton/avatar_skeleton.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
@@ -351,17 +352,9 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
             ),
             child: const Text('Annuler'),
           ),
-          ElevatedButton(
+          CustomElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-            ),
-            child: Text(
-              'Supprimer',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-            ),
+            label: 'Supprimer',
           ),
         ],
       ),

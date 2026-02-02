@@ -22,11 +22,11 @@ class ItemMember extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 28,
-              backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               child: Text(
                 initials,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -73,7 +73,9 @@ class ItemMember extends StatelessWidget {
           textAlign: TextAlign.center,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodySmall,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ],
     );

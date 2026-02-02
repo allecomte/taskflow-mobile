@@ -8,6 +8,7 @@ import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/models/task/list/task_filters.dart';
 import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/form/checkbox_boolean_item.dart';
 import 'package:taskflow_mobile/widgets/date_picker_field.dart';
 import 'package:taskflow_mobile/widgets/select_from_enum.dart';
@@ -209,12 +210,8 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                           child: const Text('Annuler'),
                         ),
                         const SizedBox(width: 12),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.secondary,
-                          ),
+                        CustomElevatedButton(
+                          label: 'Appliquer',
                           onPressed: () {
                             Navigator.pop(
                               context,
@@ -232,12 +229,6 @@ class FilterTaskBottomSheetState extends ConsumerState<FilterTaskBottomSheet> {
                               ),
                             );
                           },
-                          child: Text(
-                            'Appliquer',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
-                          ),
                         ),
                       ],
                     ),

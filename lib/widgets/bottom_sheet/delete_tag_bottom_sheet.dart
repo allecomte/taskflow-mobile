@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class DeleteTagBottomSheet extends StatelessWidget {
   final String tagName;
@@ -9,32 +10,27 @@ class DeleteTagBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 14,
-            bottom: 14,
-          ),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 14, bottom: 14),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
               Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Icon(
-                      FontAwesomeIcons.trash,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
+                padding: EdgeInsets.only(right: 10),
+                child: Icon(
+                  FontAwesomeIcons.trash,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
               Text(
                 'Supprimer le tag',
                 style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ],
           ),
@@ -51,20 +47,17 @@ class DeleteTagBottomSheet extends StatelessWidget {
                   onPressed: () => Navigator.pop(context, false),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary
-                    )
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   child: const Text('Annuler'),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
+                child: CustomElevatedButton(
+                  label: 'Supprimer',
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text('Supprimer',style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),),
                 ),
               ),
             ],

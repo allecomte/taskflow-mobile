@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/models/user/user_detailed.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/select_users.dart';
 
 class AddUserBottomSheet extends ConsumerStatefulWidget {
@@ -61,11 +62,11 @@ class AddUserBottomSheetState extends ConsumerState<AddUserBottomSheet> {
                 },
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
+              CustomElevatedButton(
+                label: 'Ajouter',
                 onPressed: userSelected == null
                     ? null
                     : () => Navigator.pop(context, userSelected),
-                child: Text('Ajouter'),
               ),
             ],
           ),

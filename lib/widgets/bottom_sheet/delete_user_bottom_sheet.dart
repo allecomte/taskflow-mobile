@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/models/user/user.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class DeleteUserBottomSheet extends StatelessWidget {
   final User user;
@@ -43,19 +44,20 @@ class DeleteUserBottomSheet extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(padding: EdgeInsets.only(top: 4),child: Icon(
-                FontAwesomeIcons.triangleExclamation,
-                size: 14,
-                color: Theme.of(context).colorScheme.error,
-              ),)
-              ,
+              Padding(
+                padding: EdgeInsets.only(top: 4),
+                child: Icon(
+                  FontAwesomeIcons.triangleExclamation,
+                  size: 14,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
               SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Un membre étant associé à une tâche ne peut être supprimé.',
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
             ],
@@ -76,17 +78,9 @@ class DeleteUserBottomSheet extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
+                child: CustomElevatedButton(
+                  label: 'Supprimer',
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text(
-                    'Supprimer',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                  ),
                 ),
               ),
             ],

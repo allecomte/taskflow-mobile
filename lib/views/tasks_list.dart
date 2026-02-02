@@ -13,6 +13,7 @@ import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/filter_task_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/bottom_sheet/sort_task_bottom_sheet.dart';
 import 'package:taskflow_mobile/widgets/card_task.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/skeleton/list_skeleton.dart';
 
 class TasksList extends ConsumerWidget {
@@ -88,45 +89,17 @@ class TasksList extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ElevatedButton.icon(
+                      CustomElevatedButton(
                         onPressed: onFiltersPressed,
-                        icon: Icon(
-                          FontAwesomeIcons.filter,
-                          size: 16,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                        label: Text(
-                          'Filtrer',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary, // fond
-                        ),
+                        icon: FontAwesomeIcons.filter,
+                        label: 'Filtrer',
                       ),
-                      ElevatedButton.icon(
+                      CustomElevatedButton(
                         onPressed: onSortPressed,
-                        icon: Icon(
-                          tasksList.sort.ascending
-                              ? FontAwesomeIcons.arrowUp
-                              : FontAwesomeIcons.arrowDown,
-                          size: 16,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                        label: Text(
-                          'Tri : ${tasksList.sort.label}',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary, // fond
-                        ),
+                        icon: tasksList.sort.ascending
+                            ? FontAwesomeIcons.arrowUp
+                            : FontAwesomeIcons.arrowDown,
+                        label: 'Tri : ${tasksList.sort.label}',
                       ),
                     ],
                   ),
@@ -188,7 +161,9 @@ class TasksList extends ConsumerWidget {
                             backgroundColor: Theme.of(
                               context,
                             ).colorScheme.surface,
-                            deleteIconColor: Theme.of(context).colorScheme.primary,
+                            deleteIconColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
                             onDeleted: () {
                               ref
                                   .read(tasksListProvider.notifier)

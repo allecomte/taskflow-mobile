@@ -9,6 +9,7 @@ import 'package:taskflow_mobile/views/project_detail.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/utils/format_date.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class ProjectForm extends ConsumerStatefulWidget {
   final ProjectDetailed? project;
@@ -89,7 +90,7 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
         Navigator.of(context)
           ..pop()
           ..pushReplacement(route);
-          SnackbarGlobal.showSuccess(
+        SnackbarGlobal.showSuccess(
           'Projet "${project.title}" modifié avec succès',
         );
       }
@@ -231,7 +232,7 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(
+                          CustomElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _onValidationPressed();
@@ -239,7 +240,14 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
                             },
                             child: _isProcessing
                                 ? CircularProgressIndicator()
-                                : Text('Valider'),
+                                : Text(
+                                    'Valider',
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    ),
+                                  ),
                           ),
                         ],
                       ),

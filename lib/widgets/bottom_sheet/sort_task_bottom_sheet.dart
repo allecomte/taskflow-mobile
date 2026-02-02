@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/models/task/list/task_sort.dart';
 import 'package:taskflow_mobile/providers/tasks_list_provider.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class SortTaskBottomSheet extends ConsumerStatefulWidget {
   const SortTaskBottomSheet({super.key});
@@ -109,23 +110,10 @@ class SortTaskBottomSheetState extends ConsumerState<SortTaskBottomSheet> {
                           child: const Text('Annuler'),
                         ),
                         const SizedBox(width: 12),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.secondary,
-                          ),
-                          onPressed: () {
+                        CustomElevatedButton(label: 'Appliquer', onPressed: () {
                             Navigator.pop(context,
                                 TaskSort(field: _field, ascending: _ascending));
-                          },
-                          child: Text(
-                            'Appliquer',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
-                          ),
-                        ),
+                          })
                       ],
                     ),
                   ),

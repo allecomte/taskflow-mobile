@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class AddTagBottomSheet extends StatefulWidget {
   const AddTagBottomSheet({super.key});
@@ -65,16 +66,15 @@ class AddTagBottomSheetState extends State<AddTagBottomSheet> {
                 ),
                 SizedBox(height: 16),
                 Center(
-                  child: ElevatedButton(
+                  child: CustomElevatedButton(
+                    label: 'Ajouter',
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         Navigator.of(context).pop(_controller.text.trim());
                       }
                     },
-                    child: Text('Ajouter'),
                   ),
-                )
-                ,
+                ),
               ],
             ),
           ),

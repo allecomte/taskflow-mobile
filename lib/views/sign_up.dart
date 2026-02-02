@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/providers/auth_provider.dart';
 import 'package:taskflow_mobile/views/home.dart';
 import 'package:taskflow_mobile/views/login.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/form/password_field.dart';
 
 class SignUp extends ConsumerStatefulWidget {
@@ -22,7 +23,7 @@ class SignUpState extends ConsumerState<SignUp> {
   final _confirmPasswordController = TextEditingController();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
   }
 
@@ -39,19 +40,17 @@ class SignUpState extends ConsumerState<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<String?>>(authProvider, (previous,next){
+    ref.listen<AsyncValue<String?>>(authProvider, (previous, next) {
       next.whenOrNull(
         data: (token) {
-          if(token != null){
+          if (token != null) {
             Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const Home()),
-          );
+              context,
+              MaterialPageRoute(builder: (_) => const Home()),
+            );
           }
         },
-        error: (_,_){
-
-        }
+        error: (_, _) {},
       );
     });
     final authState = ref.watch(authProvider);
@@ -161,7 +160,7 @@ class SignUpState extends ConsumerState<SignUp> {
                     ),
                   Padding(
                     padding: EdgeInsetsGeometry.only(top: 30),
-                    child: ElevatedButton(
+                    child: CustomElevatedButton(
                       onPressed: () {
                         if (authState.isLoading) {
                           null;
@@ -173,7 +172,7 @@ class SignUpState extends ConsumerState<SignUp> {
                           ? CircularProgressIndicator()
                           : Text(
                               "S'inscrire",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary),
                             ),
                     ),
                   ),

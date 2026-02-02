@@ -10,6 +10,7 @@ import 'package:taskflow_mobile/views/login.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
 import 'package:taskflow_mobile/widgets/card_theme_selector.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/form/email_field.dart';
 import 'package:taskflow_mobile/widgets/form/password_field.dart';
 
@@ -232,7 +233,7 @@ class ProfileState extends ConsumerState<Profile> {
                               ),
                               SizedBox(height: 24),
                               Center(
-                                child: ElevatedButton(
+                                child: CustomElevatedButton(
                                   onPressed: () {
                                     if (_isUpdateProfileProcessing) {
                                       return;
@@ -244,7 +245,14 @@ class ProfileState extends ConsumerState<Profile> {
                                   },
                                   child: _isUpdateProfileProcessing
                                       ? CircularProgressIndicator()
-                                      : Text("Valider"),
+                                      : Text(
+                                          "Valider",
+                                          style: TextStyle(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ],
@@ -297,7 +305,7 @@ class ProfileState extends ConsumerState<Profile> {
 
                               SizedBox(height: 24),
                               Center(
-                                child: ElevatedButton(
+                                child: CustomElevatedButton(
                                   onPressed: () {
                                     if (_isUpdatePasswordProcessing) {
                                       return;
@@ -309,7 +317,14 @@ class ProfileState extends ConsumerState<Profile> {
                                   },
                                   child: _isUpdatePasswordProcessing
                                       ? CircularProgressIndicator()
-                                      : Text("Valider"),
+                                      : Text(
+                                          "Valider",
+                                          style: TextStyle(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimary,
+                                          ),
+                                        ),
                                 ),
                               ),
                             ],

@@ -23,6 +23,7 @@ import 'package:taskflow_mobile/views/projects_list.dart';
 import 'package:taskflow_mobile/views/task_detail.dart';
 import 'package:taskflow_mobile/widgets/app_bar_current_view.dart';
 import 'package:taskflow_mobile/widgets/bottom_app_bar_menu.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 import 'package:taskflow_mobile/widgets/skeleton/line_skeleton.dart';
 
 class TaskForm extends ConsumerStatefulWidget {
@@ -151,17 +152,14 @@ class TaskFormState extends ConsumerState<TaskForm> {
           priority: _prioritySelected!.value,
           assignee: _userSelected!.id,
         );
-        if(!mounted) return;
+        if (!mounted) return;
         MaterialPageRoute route = MaterialPageRoute(
-            builder: (context) => TaskDetail(
-              taskLight: TaskLight.fromDetailed(task),
-            ),
-          );
-          Navigator.of(context).pushReplacement(route);
-          SnackbarGlobal.showSuccess(
-          'Tâche "${task.title}" modifié avec succès',
+          builder: (context) =>
+              TaskDetail(taskLight: TaskLight.fromDetailed(task)),
         );
-      } 
+        Navigator.of(context).pushReplacement(route);
+        SnackbarGlobal.showSuccess('Tâche "${task.title}" modifié avec succès');
+      }
       // Create new task
       else {
         final task = await taskService.createTask(
@@ -172,7 +170,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
           project: _projectSelected!.id,
           assignee: _userSelected!.id,
         );
-         if (!mounted) return;
+        if (!mounted) return;
         if (widget.project != null) {
           MaterialPageRoute route = MaterialPageRoute(
             builder: (context) => ProjectDetail(
@@ -180,23 +178,20 @@ class TaskFormState extends ConsumerState<TaskForm> {
             ),
           );
           Navigator.of(context).pushReplacement(route);
-        } else if(_projectSelected != null){
+        } else if (_projectSelected != null) {
           MaterialPageRoute route = MaterialPageRoute(
-            builder: (context) => ProjectDetail(
-              projectLight: _projectSelected!,
-            ),
+            builder: (context) =>
+                ProjectDetail(projectLight: _projectSelected!),
           );
           Navigator.of(context).pushReplacement(route);
-        }else{
+        } else {
           MaterialPageRoute route = MaterialPageRoute(
             builder: (context) => const ProjectsList(),
           );
           Navigator.of(context).pushReplacement(route);
         }
         ref.read(tasksListProvider.notifier).refresh();
-        SnackbarGlobal.showSuccess(
-          'Projet "${task.title}" créé avec succès',
-        );
+        SnackbarGlobal.showSuccess('Projet "${task.title}" créé avec succès');
       }
     } catch (e) {
       if (!mounted) return;
@@ -418,7 +413,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(
+                          CustomElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _onValidationPressed();
@@ -426,7 +421,14 @@ class TaskFormState extends ConsumerState<TaskForm> {
                             },
                             child: _isProcessing
                                 ? CircularProgressIndicator()
-                                : Text('Valider'),
+                                : Text(
+                                    'Valider',
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    ),
+                                  ),
                           ),
                         ],
                       ),

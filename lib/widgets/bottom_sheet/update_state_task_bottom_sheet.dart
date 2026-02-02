@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/enums/task_state.dart';
+import 'package:taskflow_mobile/widgets/custom_elevated_button.dart';
 
 class UpdateStateTaskBottomSheet extends StatefulWidget {
   final TaskState state;
@@ -79,19 +80,9 @@ class UpdateStateTaskBottomSheetState
                 children: [
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.secondary,
-                      ),
+                    child: CustomElevatedButton(
+                      label: 'Enregistrer',
                       onPressed: () => Navigator.pop(context, _stateSelected),
-                      child: Text(
-                        'Enregistrer',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                      ),
                     ),
                   ),
                 ],
