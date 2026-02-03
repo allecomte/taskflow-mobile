@@ -11,8 +11,13 @@ class BottomAppBarMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconSelected = isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary;
+    final iconUnselected = isDark ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.inversePrimary;
     return BottomAppBar(
-      color: Theme.of(context).colorScheme.primary,
+      color: isDark ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.primary,
+      surfaceTintColor: isDark ? Theme.of(context).colorScheme.primary.withAlpha(80) : null,
+      elevation: isDark ? 2 : 0,
       child: Padding(
         padding: EdgeInsetsGeometry.directional(start: 16, end: 16),
         child: Row(
@@ -30,9 +35,7 @@ class BottomAppBarMenu extends StatelessWidget {
               icon: Icon(
                 FontAwesomeIcons.solidHouse,
                 size: 35,
-                color: currentView == 'home'
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.inversePrimary,
+                color: currentView == 'home' ? iconSelected : iconUnselected,
               ),
             ),
             // -------- PROJECTS BUTTON
@@ -47,8 +50,7 @@ class BottomAppBarMenu extends StatelessWidget {
                 FontAwesomeIcons.solidFolder,
                 size: 35,
                 color: currentView == 'project'
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.inversePrimary,
+                    ? iconSelected : iconUnselected,
               ),
             ),
             // -------- TASKS BUTTON
@@ -63,8 +65,7 @@ class BottomAppBarMenu extends StatelessWidget {
                 FontAwesomeIcons.list,
                 size: 35,
                 color: currentView == 'task'
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.inversePrimary,
+                    ? iconSelected : iconUnselected,
               ),
             ),
             // -------- SEARCH BUTTON
@@ -91,8 +92,7 @@ class BottomAppBarMenu extends StatelessWidget {
                 FontAwesomeIcons.user,
                 size: 35,
                 color: currentView == 'profile'
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.inversePrimary,
+                    ? iconSelected : iconUnselected,
               ),
             ),
           ],

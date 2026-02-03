@@ -26,7 +26,7 @@ class Home extends ConsumerStatefulWidget {
   ConsumerState<Home> createState() => HomeState();
 }
 
-class HomeState extends ConsumerState<Home> with RouteAware{
+class HomeState extends ConsumerState<Home> with RouteAware {
   LoadState projectsState = LoadState.loading;
   LoadState tasksState = LoadState.loading;
 
@@ -74,22 +74,34 @@ class HomeState extends ConsumerState<Home> with RouteAware{
 
   Future<void> getData() async {
     final projectService = ref.read(projectServiceProvider);
-      try {
-        final dataProjects = await projectService.getProjects(pagination: true, limit: numberOfItemsToDisplay, page: 1, getAlsoArchived: false, sort: '-createdAt');
-        setState(() {
-          projects = dataProjects.data;
-          numberOfProjects = dataProjects.pagination.total;
-          projectsState = LoadState.success;
-        });
-      } catch (e) {
-        setState(() {
-          projectsState = LoadState.error;
-        });
-      }
+    try {
+      final dataProjects = await projectService.getProjects(
+        pagination: true,
+        limit: numberOfItemsToDisplay,
+        page: 1,
+        getAlsoArchived: false,
+        sort: '-createdAt',
+      );
+      setState(() {
+        projects = dataProjects.data;
+        numberOfProjects = dataProjects.pagination.total;
+        projectsState = LoadState.success;
+      });
+    } catch (e) {
+      setState(() {
+        projectsState = LoadState.error;
+      });
+    }
 
     final taskService = TaskService();
     try {
-      final dataTasks = await taskService.getTasks(pagination: true, limit: numberOfItemsToDisplay, page: 1, notClosed: true, sort: '-dueAt');
+      final dataTasks = await taskService.getTasks(
+        pagination: true,
+        limit: numberOfItemsToDisplay,
+        page: 1,
+        notClosed: true,
+        sort: '-dueAt',
+      );
       setState(() {
         tasks = dataTasks.data;
         numberOfTasks = dataTasks.pagination.total;
@@ -104,236 +116,257 @@ class HomeState extends ConsumerState<Home> with RouteAware{
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Scaffold(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
       bottomNavigationBar: BottomAppBarMenu(currentView: 'home'),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: refreshData,
           child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                /* ----------------- COUNTER ----------------- */
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Card.filled(
-                        color: Theme.of(context).colorScheme.primary,
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 10),
-                                child: projectsState == LoadState.loading
-                                    ? CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.onPrimary,
-                                            ),
-                                      )
-                                    : projectsState == LoadState.error
-                                    ? Icon(
-                                        FontAwesomeIcons.triangleExclamation,
-                                        size: 25,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimary,
-                                      )
-                                    : Text(
-                                        numberOfProjects.toString(),
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onPrimary,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  /* ----------------- COUNTER ----------------- */
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Card.filled(
+                          color: isDark ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.primary,
+                          surfaceTintColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withAlpha(80),
+                          elevation: 2,
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(right: 10),
+                                  child: projectsState == LoadState.loading
+                                      ? CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary
+                                              ),
+                                        )
+                                      : projectsState == LoadState.error
+                                      ? Icon(
+                                          FontAwesomeIcons.triangleExclamation,
+                                          size: 25,
+                                          color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                                        )
+                                      : Text(
+                                          numberOfProjects.toString(),
+                                          style: TextStyle(
+                                            color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                              ),
-                              Text(
-                                'Projects',
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                  fontSize: 20,
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  'Projects',
+                                  style: TextStyle(
+                                    color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Card.filled(
-                        color: Theme.of(context).colorScheme.primary,
-                        child: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 16),
-                                child: tasksState == LoadState.loading
-                                    ? CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.onPrimary,
-                                            ),
-                                      )
-                                    : tasksState == LoadState.error
-                                    ? Icon(
-                                        FontAwesomeIcons.triangleExclamation,
-                                        size: 25,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimary,
-                                      )
-                                    : Text(
-                                        numberOfTasks.toString(),
-                                        style: TextStyle(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onPrimary,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Card.filled(
+                          color: isDark ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.primary,
+                          surfaceTintColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withAlpha(80),
+                          elevation: 2,
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(right: 16),
+                                  child: tasksState == LoadState.loading
+                                      ? CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                                              ),
+                                        )
+                                      : tasksState == LoadState.error
+                                      ? Icon(
+                                          FontAwesomeIcons.triangleExclamation,
+                                          size: 25,
+                                          color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                                        )
+                                      : Text(
+                                          numberOfTasks.toString(),
+                                          style: TextStyle(
+                                            color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                              ),
-                              Text(
-                                'Tâches',
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimary,
-                                  fontSize: 20,
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  'Tâches',
+                                  style: TextStyle(
+                                    color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onPrimary,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  /* ----------------- PROJECTS ----------------- */
+                  Padding(
+                    padding: EdgeInsetsGeometry.directional(
+                      top: 30,
+                      start: 10,
+                      end: 10,
                     ),
-                  ],
-                ),
-                /* ----------------- PROJECTS ----------------- */
-                Padding(
-                  padding: EdgeInsetsGeometry.directional(
-                    top: 30,
-                    start: 10,
-                    end: 10,
-                  ),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Mes projets',
-                              style: TextStyle(
+                    child: Column(
+                      children: [
+                        InkWell(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Mes projets',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Icon(
+                                FontAwesomeIcons.chevronRight,
                                 color: Theme.of(context).colorScheme.primary,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                                size: 20,
                               ),
-                            ),
-                            Icon(
-                              FontAwesomeIcons.chevronRight,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 20,
-                            ),
-                          ],
+                            ],
+                          ),
+                          onTap: () {
+                            MaterialPageRoute route = MaterialPageRoute(
+                              builder: (context) => const ProjectsList(),
+                            );
+                            Navigator.of(context).push(route);
+                          },
                         ),
-                        onTap: () {
-                          MaterialPageRoute route = MaterialPageRoute(builder: (context) => const ProjectsList());
-                          Navigator.of(context).push(route);
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      projectsState == LoadState.loading
-                          ? ListSkeleton()
-                          : projectsState == LoadState.error
-                          ? Text(
-                              'Erreur lors du chargement des projets',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
+                        SizedBox(height: 10),
+                        projectsState == LoadState.loading
+                            ? ListSkeleton()
+                            : projectsState == LoadState.error
+                            ? Text(
+                                'Erreur lors du chargement des projets',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                              )
+                            : projects.isEmpty
+                            ? Text(
+                                "Vous n'avez aucun projet",
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: ((context, index) =>
+                                    CardProject(project: projects[index])),
+                                itemCount:
+                                    projects.length < numberOfItemsToDisplay
+                                    ? projects.length
+                                    : numberOfItemsToDisplay,
                               ),
-                            )
-                          : projects.isEmpty ? Text("Vous n'avez aucun projet", style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontStyle: FontStyle.italic)) : 
-                          ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: ((context,index) => CardProject(project: projects[index])),
-                              itemCount: projects.length < numberOfItemsToDisplay ? projects.length : numberOfItemsToDisplay,
-                            ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                /* ----------------- RECENT TASKS ----------------- */
-                Padding(
-                  padding: EdgeInsetsGeometry.directional(
-                    top: 30,
-                    start: 10,
-                    end: 10,
-                  ),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Mes tâches',
-                              style: TextStyle(
+                  /* ----------------- RECENT TASKS ----------------- */
+                  Padding(
+                    padding: EdgeInsetsGeometry.directional(
+                      top: 30,
+                      start: 10,
+                      end: 10,
+                    ),
+                    child: Column(
+                      children: [
+                        InkWell(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Mes tâches',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Icon(
+                                FontAwesomeIcons.chevronRight,
                                 color: Theme.of(context).colorScheme.primary,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                                size: 20,
                               ),
-                            ),
-                            Icon(
-                              FontAwesomeIcons.chevronRight,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 20,
-                            ),
-                          ],
+                            ],
+                          ),
+                          onTap: () {
+                            MaterialPageRoute route = MaterialPageRoute(
+                              builder: (context) => const TasksList(),
+                            );
+                            Navigator.of(context).push(route);
+                          },
                         ),
-                        onTap: () {
-                          MaterialPageRoute route = MaterialPageRoute(builder: (context) => const TasksList());
-                          Navigator.of(context).push(route);
-                        }
-                      ),
-                      SizedBox(height: 10),
-                      tasksState == LoadState.loading
-                          ? ListSkeleton()
-                          : tasksState == LoadState.error
-                          ? Text(
-                              'Erreur lors du chargement des tâches',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
+                        SizedBox(height: 10),
+                        tasksState == LoadState.loading
+                            ? ListSkeleton()
+                            : tasksState == LoadState.error
+                            ? Text(
+                                'Erreur lors du chargement des tâches',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                              )
+                            : tasks.isEmpty
+                            ? Text(
+                                "Vous n'avez aucune tâche",
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: ((context, index) =>
+                                    CardTask(task: tasks[index])),
+                                itemCount: tasks.length < numberOfItemsToDisplay
+                                    ? tasks.length
+                                    : numberOfItemsToDisplay,
                               ),
-                            )
-                          : tasks.isEmpty ? Text("Vous n'avez aucune tâche", style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontStyle: FontStyle.italic)) : 
-                          ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: ((context,index) => CardTask(task: tasks[index])),
-                              itemCount: tasks.length < numberOfItemsToDisplay ? tasks.length : numberOfItemsToDisplay,
-                            ),
-                    ],
+                      ],
+                    ),
                   ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
-        ) 
-          ),
+        ),
       ),
     );
   }

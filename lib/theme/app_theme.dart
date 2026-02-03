@@ -16,6 +16,9 @@ final ThemeData darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: seedColor,
     brightness: Brightness.dark,
+    surface: Color(0xFF2B322E),
+    secondary: Color(0xFF3E916D)
   ),
+  scaffoldBackgroundColor: Color(0xFF161D19),
   useMaterial3: true,
 );

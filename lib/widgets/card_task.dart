@@ -9,8 +9,11 @@ class CardTask extends StatelessWidget {
   const CardTask({super.key, required this.task, this.displayAssignee = false});
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
-      color: Theme.of(context).colorScheme.primary,
+      color: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.primary.withAlpha(80),
+      elevation: 2,
       child: ListTile(
         // leading: Icon(
         //   FontAwesomeIcons.solidFolder,
@@ -19,7 +22,7 @@ class CardTask extends StatelessWidget {
         title: Text(
           task.title,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -28,28 +31,30 @@ class CardTask extends StatelessWidget {
           children: [
             Text(
               'Échéance : ${formatDateFr(task.dueAt)}',
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              style: TextStyle(color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.primary),
             ),
             if (displayAssignee)
               task.assignee != null
                   ? Text(
                       'Assignée à ${task.assignee?.firstname} ${task.assignee?.lastname}',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.primary,
                       ),
                     )
                   : Text(
                       'Aucune personne n\'est assigné à tâche',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: isDark ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.primary,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
           ],
         ),
         // trailing: Icon(FontAwesomeIcons.chevronRight),
-        onTap: (){
-          MaterialPageRoute route = MaterialPageRoute(builder: (context) => TaskDetail(taskLight: task));
+        onTap: () {
+          MaterialPageRoute route = MaterialPageRoute(
+            builder: (context) => TaskDetail(taskLight: task),
+          );
           Navigator.of(context).push(route);
         },
       ),

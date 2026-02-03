@@ -439,7 +439,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
                   Text(
                     project.description,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 20),
@@ -448,7 +448,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
                       Icon(
                         FontAwesomeIcons.calendar,
                         size: 16,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       SizedBox(width: 10),
                       project.endAt != null && project.endAt!.isNotEmpty
@@ -456,14 +456,14 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
                               "Du ${formatDateFr(project.startAt)} au ${formatDateFr(project.endAt!)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             )
                           : Text(
                               "À partir du ${formatDateFr(project.startAt)}",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                     ],
@@ -483,13 +483,13 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
                             Icon(
                               FontAwesomeIcons.user,
                               size: 16,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                             SizedBox(width: 10),
                             Text(
                               'Créé par ${owner?.firstname ?? ''} ${owner?.lastname ?? ''} le ${createdAt != null ? formatDateFr(createdAt!) : ''}',
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],
