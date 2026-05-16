@@ -207,7 +207,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
           Navigator.of(context).pushReplacement(route);
         }
         ref.read(tasksListProvider.notifier).refresh();
-        SnackbarGlobal.showSuccess('Projet "${task.title}" créé avec succès');
+        SnackbarGlobal.showSuccess('Tâche "${task.title}" créée avec succès');
       }
     } catch (e) {
       if (!mounted) return;
