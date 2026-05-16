@@ -19,9 +19,19 @@ class AuthNotifier extends AsyncNotifier<String?> {
     _ref = ref;
     final token = await SecureStorage.getToken();
     if (token != null) {
-      final userService = UserService();
-      final user = await userService.getUserProfile();
-      _ref.read(userProvider.notifier).setUser(user);
+      try {
+        final userService = UserService();
+        final user = await userService.getUserProfile();
+        _ref.read(userProvider.notifier).setUser(user);
+      } on ApiException catch (_) {
+        // Token invalide ou expiré → on le supprime et on retourne null
+        await SecureStorage.deleteToken();
+        return null;
+      } catch (_) {
+        // Erreur réseau ou autre → on retourne null sans crasher
+        await SecureStorage.deleteToken();
+        return null;
+      }
     }
     return token;
   }
@@ -59,8 +69,13 @@ class AuthNotifier extends AsyncNotifier<String?> {
     required String password,
   }) async {
     state = const AsyncLoading();
-    try{
-      final result = await _authApi.register(firstname: firstname, lastname: lastname, email: email, password: password);
+    try {
+      final result = await _authApi.register(
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        password: password,
+      );
       await SecureStorage.saveToken(result['token']);
 
       final userJson = result['user'] as Map<String, dynamic>;

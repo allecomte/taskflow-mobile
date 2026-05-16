@@ -18,6 +18,7 @@ class LoginState extends ConsumerState<Login> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _hasSubmitted = false;
 
   @override
   void initState() {
@@ -25,6 +26,7 @@ class LoginState extends ConsumerState<Login> {
   }
 
   void _login() {
+    setState(() => _hasSubmitted = true);
     ref
         .read(authProvider.notifier)
         .login(
@@ -32,6 +34,56 @@ class LoginState extends ConsumerState<Login> {
           password: _passwordController.text,
         );
   }
+
+  void _showForgotPasswordSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 24),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Icon(
+            Icons.lock_reset,
+            size: 48,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Mot de passe oublié ?',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Pour réinitialiser votre mot de passe, veuillez contacter l\'administrateur de l\'application.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Compris'),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +134,7 @@ class LoginState extends ConsumerState<Login> {
                     ],
                   ),
                 ),
-                if (authState.hasError)
+                if (_hasSubmitted && authState.hasError)
                   Padding(
                     padding: EdgeInsetsGeometry.only(top: 30),
                     child: Text(
@@ -114,7 +166,7 @@ class LoginState extends ConsumerState<Login> {
                 Padding(
                   padding: EdgeInsetsGeometry.only(top: 30),
                   child: InkWell(
-                    onTap: () => {},
+                    onTap: () => _showForgotPasswordSheet(context),
                     child: Text(
                       "Mot de passe oublié ?",
                       style: TextStyle(
