@@ -55,7 +55,11 @@ class TaskFormState extends ConsumerState<TaskForm> {
   @override
   void initState() {
     super.initState();
-
+    // addPostFrameCallback garantit que le widget est monté
+    // avant d'interagir avec le provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initRefresh();
+    });
     _titleController = TextEditingController(text: widget.task?.title ?? '');
     _descriptionController = TextEditingController(
       text: widget.task?.description ?? '',
@@ -74,6 +78,18 @@ class TaskFormState extends ConsumerState<TaskForm> {
       );
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => loadData());
+  }
+
+  void _initRefresh() {
+    final hasCache = ref.read(usersProvider).valueOrNull != null;
+
+    if (hasCache) {
+      // Données déjà en cache → refresh silencieux, pas de loader
+      ref.read(usersProvider.notifier).refreshSilently();
+    } else {
+      // Aucune donnée en cache → premier chargement normal avec loader
+      ref.invalidate(usersProvider);
+    }
   }
 
   @override
@@ -196,7 +212,7 @@ class TaskFormState extends ConsumerState<TaskForm> {
     } catch (e) {
       if (!mounted) return;
       SnackbarGlobal.showError(
-        'Erreur lors de la ${widget.task?.id != null ? 'modification' : 'création'} de la tâche',
+        'Erreur lors de la ${widget.task?.id != null ? 'modification' : 'création'} de la tâche : $e',
       );
     } finally {
       setState(() {

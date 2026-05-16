@@ -5,6 +5,7 @@ import 'package:taskflow_mobile/models/api/api_response_pagination.dart';
 import 'package:taskflow_mobile/models/task/task_detailed.dart';
 import 'package:taskflow_mobile/models/task/task_light.dart';
 import 'package:taskflow_mobile/services/api/dio_client.dart';
+import 'package:taskflow_mobile/utils/dio_error_handler.dart';
 
 class TaskService {
   final Dio _dio = DioClient().dio;
@@ -47,7 +48,7 @@ class TaskService {
       );
       return result;
     } on DioException catch (e) {
-      throw Exception('Failed to load tasks: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -57,7 +58,7 @@ class TaskService {
       final task = TaskDetailed.fromJson(response.data);
       return task;
     }on DioException catch (e) {
-      throw Exception('Failed to load task: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -88,7 +89,7 @@ class TaskService {
       final task = TaskDetailed.fromJson(data);
       return task;
     } on DioException catch (e) {
-      throw Exception('Failed to create a task : ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -116,7 +117,7 @@ class TaskService {
       final task = TaskDetailed.fromJson(response.data);
       return task;
     } on DioException catch (e) {
-      throw Exception('Failed to update the task : ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -134,7 +135,7 @@ class TaskService {
       final task = TaskDetailed.fromJson(response.data);
       return task;
     } on DioException catch (e) {
-      throw Exception('Failed to update the task : ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -142,7 +143,7 @@ class TaskService {
     try {
       await _dio.delete('/tasks/$taskId');
     } on DioException catch (e) {
-      throw Exception('Failed to delete task : ${e.message}');
+      throwDioException(e);
     }
   }
 }

@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile/models/user/user_detailed.dart';
 import 'package:taskflow_mobile/models/user/user_light.dart';
 import 'package:taskflow_mobile/services/api/dio_client.dart';
+import 'package:taskflow_mobile/utils/dio_error_handler.dart';
+
+final userServiceProvider = Provider<UserService>((ref) => UserService());
 
 class UserService {
   final Dio _dio = DioClient().dio;
@@ -13,7 +17,7 @@ class UserService {
       final response = await _dio.get('/users/profile');
       return UserLight.fromJson(response.data);
     } on DioException catch (e) {
-      throw Exception('Failed to load user profile: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -23,7 +27,7 @@ class UserService {
       List<dynamic> data = response.data;
       return data.map((json) => UserDetailed.fromJson(json)).toList();
     } on DioException catch (e) {
-      throw Exception('Failed to load users: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -36,7 +40,7 @@ class UserService {
       }));
       return UserLight.fromJson(response.data);
     } on DioException catch (e) {
-      throw Exception('Failed to update user profile: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -48,7 +52,7 @@ class UserService {
       }));
       return UserLight.fromJson(response.data);
     } on DioException catch (e) {
-      throw Exception('Failed to update user password: ${e.message}');
+      throwDioException(e);
     }
   }
 }

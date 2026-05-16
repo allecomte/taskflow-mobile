@@ -118,7 +118,7 @@ class ProjectFormUpdateState extends ConsumerState<ProjectForm> {
       }
     } catch (e) {
       SnackbarGlobal.showError(
-        'Erreur lors de la ${widget.project?.id != null ? 'modification' : 'création'} du projet',
+        'Erreur lors de la ${widget.project?.id != null ? 'modification' : 'création'} du projet : $e',
       );
     } finally {
       setState(() {

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:taskflow_mobile/models/tag/tag.dart';
 import 'package:taskflow_mobile/services/api/dio_client.dart';
+import 'package:taskflow_mobile/utils/dio_error_handler.dart';
 
 class TagService {
   final Dio _dio = DioClient().dio;
@@ -11,7 +12,7 @@ class TagService {
       final tag = Tag.fromJson(result.data);
       return tag;
     } on DioException catch (e) {
-      throw Exception('Failed to create tag: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -21,7 +22,7 @@ class TagService {
       final tag = Tag.fromJson(result.data);
       return tag;
     } on DioException catch (e) {
-      throw Exception('Failed to create tag: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -29,7 +30,7 @@ class TagService {
     try{
       await _dio.delete('/tags/$tagId');
     }on DioException catch (e) {
-      throw Exception('Failed to delete tag: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -37,7 +38,7 @@ class TagService {
     try {
       await _dio.post('/tasks/$taskId/tags/$tagId');
     } on DioException catch (e) {
-      throw Exception('Failed to associate or dissociate the tag with the task : ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -47,7 +48,7 @@ class TagService {
       final List<dynamic> data = response.data;
       return data.map((json) => Tag.fromJson(json)).toList();
     }on DioException catch (e) {
-      throw Exception('Failed to load tasks: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -57,7 +58,7 @@ class TagService {
       final List<dynamic> data = response.data;
       return data.map((json) => Tag.fromJson(json)).toList();
     }on DioException catch (e) {
-      throw Exception('Failed to load tasks: ${e.message}');
+      throwDioException(e);
     }
   }
 }

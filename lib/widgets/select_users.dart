@@ -12,7 +12,7 @@ class SelectUsers extends ConsumerStatefulWidget {
     super.key,
     required this.userIdsToExclude,
     this.initialValue,
-    required this.onSelected, 
+    required this.onSelected,
   });
 
   @override
@@ -21,6 +21,20 @@ class SelectUsers extends ConsumerStatefulWidget {
 
 class SelectUsersState extends ConsumerState<SelectUsers> {
   UserDetailed? userSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final hasCache = ref.read(usersProvider).valueOrNull != null;
+      if (hasCache) {
+        ref.read(usersProvider.notifier).refreshSilently();
+      } else {
+        ref.invalidate(usersProvider);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final usersAsync = ref.watch(usersProvider);
@@ -31,13 +45,22 @@ class SelectUsersState extends ConsumerState<SelectUsers> {
             .where((u) => !widget.userIdsToExclude.contains(u.id))
             .toList();
 
+        // Si l'utilisateur sélectionné n'est plus dans la liste filtrée, on le reset
+        if (userSelected != null &&
+            !usersFiltered.any((u) => u.id == userSelected!.id)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() => userSelected = null);
+          });
+        }
+
         if (usersFiltered.isEmpty) {
           return const Text('Aucun utilisateur disponible');
         }
 
         return DropdownButtonFormField<UserDetailed>(
           decoration: const InputDecoration(labelText: 'Utilisateur'),
-          initialValue: userSelected ??
+          initialValue:
+              userSelected ??
               (widget.initialValue != null
                   ? usersFiltered.firstWhere(
                       (user) => user.id == widget.initialValue,
@@ -57,9 +80,10 @@ class SelectUsersState extends ConsumerState<SelectUsers> {
           },
         );
       },
-      error: (_, _) => Text('Erreur lors du chargement des utilisateurs',style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                          )),
+      error: (_, _) => Text(
+        'Erreur lors du chargement des utilisateurs',
+        style: TextStyle(color: Theme.of(context).colorScheme.error),
+      ),
       loading: () => LineSkeleton(context: context),
     );
   }

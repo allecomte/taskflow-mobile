@@ -5,6 +5,7 @@ import 'package:taskflow_mobile/models/api/api_response_pagination.dart';
 import 'package:taskflow_mobile/models/project/project_detailed.dart';
 import 'package:taskflow_mobile/models/project/project_light.dart';
 import 'package:taskflow_mobile/services/api/dio_client.dart';
+import 'package:taskflow_mobile/utils/dio_error_handler.dart';
 
 class ProjectService {
   final Dio _dio;
@@ -36,7 +37,7 @@ class ProjectService {
       );
       return result;
     } on DioException catch (e) {
-      throw Exception('Failed to load projects: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -46,7 +47,7 @@ class ProjectService {
       final project = ProjectDetailed.fromJson(response.data);
       return project;
     } on DioException catch (e) {
-      throw Exception('Failed to load project: ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -71,7 +72,7 @@ class ProjectService {
       final project = ProjectLight.fromJson(data);
       return project;
     } on DioException catch (e) {
-      throw Exception('Failed to update project : ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -95,7 +96,7 @@ class ProjectService {
       final project = ProjectDetailed.fromJson(response.data);
       return project;
     } on DioException catch (e) {
-      throw Exception('Failed to update project : ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -109,7 +110,7 @@ class ProjectService {
         data: jsonEncode({'member': userId}),
       );
     } on DioException catch (e) {
-      throw Exception('Failed to add the user to the project : ${e.message}');
+      throwDioException(e);
     }
   }
 
@@ -120,7 +121,7 @@ class ProjectService {
     try {
       await _dio.delete('/projects/$projectId/members/$userId');
     } on DioException catch (e) {
-      throw Exception(e.response?.data['error'] ?? e.message);
+      throwDioException(e);
     }
   }
 
@@ -128,7 +129,7 @@ class ProjectService {
     try {
       await _dio.delete('/projects/$projectId');
     } on DioException catch (e) {
-      throw Exception('Failed to delete project : ${e.message}');
+      throwDioException(e);
     }
   }
 }

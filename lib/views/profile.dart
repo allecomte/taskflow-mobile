@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taskflow_mobile/providers/auth_provider.dart';
-import 'package:taskflow_mobile/providers/theme_mode_provider.dart';
 import 'package:taskflow_mobile/providers/user_provider.dart';
 import 'package:taskflow_mobile/services/api/data/user_service.dart';
 import 'package:taskflow_mobile/utils/snackbar_global.dart';
@@ -68,7 +67,7 @@ class ProfileState extends ConsumerState<Profile> {
     } catch (e) {
       if (!mounted) return;
       SnackbarGlobal.showError(
-        'Erreur lors de la mise à jour des informations du profil',
+        'Erreur lors de la mise à jour des informations du profil : $e',
       );
     } finally {
       setState(() {
@@ -92,7 +91,7 @@ class ProfileState extends ConsumerState<Profile> {
     } catch (e) {
       if (!mounted) return;
       SnackbarGlobal.showError(
-        'Erreur lors de la mise à jour du mot de passe du profil',
+        'Erreur lors de la mise à jour du mot de passe du profil : $e',
       );
     } finally {
       setState(() {

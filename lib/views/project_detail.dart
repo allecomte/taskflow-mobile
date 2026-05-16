@@ -141,7 +141,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       if (!mounted) return;
       SnackbarGlobal.showSuccess('Tag créé avec succès');
     } catch (e) {
-      SnackbarGlobal.showError('Erreur lors de la création du tag');
+      SnackbarGlobal.showError('Erreur lors de la création du tag : $e');
     }
   }
 
@@ -176,7 +176,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       if (!mounted) return;
       SnackbarGlobal.showSuccess('Tag modifié avec succès');
     } catch (e) {
-      SnackbarGlobal.showError('Erreur lors de la modification');
+      SnackbarGlobal.showError('Erreur lors de la modification : $e');
     }
   }
 
@@ -206,7 +206,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       if (!mounted) return;
       SnackbarGlobal.showSuccess('Tag supprimé');
     } catch (e) {
-      SnackbarGlobal.showError('Erreur lors de la suppression');
+      SnackbarGlobal.showError('Erreur lors de la suppression : $e');
     }
   }
 
@@ -382,7 +382,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
         'Projet "${widget.projectLight.title}" supprimé avec succès',
       );
     } catch (e) {
-      SnackbarGlobal.showError('Erreur lors de la suppression du projet');
+      SnackbarGlobal.showError('Erreur lors de la suppression du projet : $e');
     }
   }
 

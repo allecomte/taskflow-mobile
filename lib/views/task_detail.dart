@@ -161,7 +161,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
       }
     } catch (e) {
       if (!mounted) return;
-      SnackbarGlobal.showError('Erreur lors de la mise à jour de la priorité');
+      SnackbarGlobal.showError('Erreur lors de la mise à jour de la priorité : $e');
     }
   }
 
@@ -228,7 +228,7 @@ class TaskDetailState extends ConsumerState<TaskDetail> {
       );
     } catch (e) {
       if (!mounted) return;
-      SnackbarGlobal.showError('Erreur lors de la suppression de la tâche');
+      SnackbarGlobal.showError('Erreur lors de la suppression de la tâche : $e');
     }
   }
 
