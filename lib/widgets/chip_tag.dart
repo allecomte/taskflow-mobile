@@ -28,7 +28,7 @@ class ChipTag extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () => onEdit != null ? () => onEdit!(tag) : null,
+          onTap: onEdit != null ? () => onEdit!(tag) : null,
           child: Padding(
             padding: EdgeInsets.only(left: 12, top: 6, bottom: 6, right: 6),
             child: Row(

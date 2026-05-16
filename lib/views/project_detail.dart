@@ -53,6 +53,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   List<User> members = [];
   User? owner;
   String? createdAt;
+  bool _isBottomSheetOpen = false;
 
   @override
   void initState() {
@@ -76,6 +77,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
 
   @override
   void didPopNext() {
+    if (_isBottomSheetOpen) return;
     // Called when the current route has been popped back to
     refreshProject();
   }
@@ -114,6 +116,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   }
 
   Future<void> _onAddTagPressed() async {
+    _isBottomSheetOpen = true;
     final tagName = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -122,6 +125,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       ),
       builder: (_) => const AddTagBottomSheet(),
     );
+    _isBottomSheetOpen = false;
 
     if (tagName == null) return;
 
@@ -146,6 +150,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   }
 
   Future<void> _onUpdateTagPressed(Tag tag) async {
+    _isBottomSheetOpen = true;
     final newName = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -154,6 +159,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       ),
       builder: (_) => UpdateTagBottomSheet(initialName: tag.name),
     );
+    _isBottomSheetOpen = false;
 
     if (newName == null || newName.isEmpty) return;
 
@@ -181,6 +187,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   }
 
   Future<void> _onDeleteTagPressed(Tag tag) async {
+    _isBottomSheetOpen = true;
     final confirm = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -189,7 +196,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       ),
       builder: (_) => DeleteTagBottomSheet(tagName: tag.name),
     );
-
+    _isBottomSheetOpen = false;
     if (confirm == true) {
       _deleteTag(tag);
     }
@@ -211,6 +218,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   }
 
   Future<void> _onAddUserPressed() async {
+    _isBottomSheetOpen = true;
     // Users already members and creator
     List<String> userIdsToExclude = members.map((user) => user.id).toList();
     if (owner != null) userIdsToExclude.add(owner!.id);
@@ -222,6 +230,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       ),
       builder: (_) => AddUserBottomSheet(userIdsToExclude: userIdsToExclude),
     );
+    _isBottomSheetOpen = false;
     if (userToAdd == null) return;
     _addMember(userToAdd);
   }
@@ -248,6 +257,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
   }
 
   Future<void> _onDeleteUserPressed(User user) async {
+    _isBottomSheetOpen = true;
     final confirm = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -256,7 +266,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       ),
       builder: (_) => DeleteUserBottomSheet(user: user),
     );
-
+    _isBottomSheetOpen = false;
     if (confirm == true) {
       _deleteMember(user);
     }
