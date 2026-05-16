@@ -96,12 +96,12 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
       setState(() {
         projectDetail = project;
         tasks = isUserManager
-            ? project.tasks
+            ? List.from(project.tasks)
             : project.tasks
                   .where((task) => task.assignee?.id == user.id)
                   .toList();
-        tags = project.tags;
-        members = project.members;
+        tags = List.from(project.tags);
+        members = List.from(project.members);
         owner = project.owner;
         createdAt = project.createdAt;
         projectState = LoadState.success;
@@ -136,7 +136,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
         name: name,
       );
       setState(() {
-        tags.add(newTag);
+        tags = [...tags, newTag];
       });
       if (!mounted) return;
       SnackbarGlobal.showSuccess('Tag créé avec succès');
@@ -234,7 +234,7 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
         userId: user.id,
       );
       setState(() {
-        members.add(user);
+        members = [...members, user];
       });
       if (!mounted) return;
       SnackbarGlobal.showSuccess(
@@ -392,8 +392,6 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
     final project = projectDetail ?? widget.projectLight;
     final isUserManager = user!.roles.contains('ROLE_MANAGER');
     final isUserOwner = user.projectsOwned.contains(project.id);
-    print('Is user manager? $isUserManager');
-    print('Is user owner? $isUserOwner');
     return Scaffold(
       appBar: AppBarCurrentView(
         title: project.title,
