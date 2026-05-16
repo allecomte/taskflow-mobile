@@ -392,6 +392,8 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
     final project = projectDetail ?? widget.projectLight;
     final isUserManager = user!.roles.contains('ROLE_MANAGER');
     final isUserOwner = user.projectsOwned.contains(project.id);
+    print('Is user manager? $isUserManager');
+    print('Is user owner? $isUserOwner');
     return Scaffold(
       appBar: AppBarCurrentView(
         title: project.title,
@@ -669,10 +671,10 @@ class ProjectDetailState extends ConsumerState<ProjectDetail> with RouteAware {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: ((context, index) => CardTask(
-                            task: projectDetail!.tasks[index],
+                            task: tasks[index],
                             displayAssignee: isUserManager,
                           )),
-                          itemCount: projectDetail!.tasks.length,
+                          itemCount: tasks.length,
                         ),
                 ],
               ),
